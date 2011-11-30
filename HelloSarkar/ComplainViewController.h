@@ -13,8 +13,6 @@
 #import "DistrictViewController.h"
 #import "ComplainTypeViewController.h"
 
-#define SERVER_STRING @"http://apps.mobilenepal.net"
-
 @interface ComplainViewController : UIViewController <UITextFieldDelegate, UIScrollViewDelegate, UIActionSheetDelegate, UIAlertViewDelegate>{
     IBOutlet UIScrollView *scrollView;
     IBOutlet UITextField *nameTextField;
@@ -52,7 +50,6 @@
 @property(nonatomic,retain) NSString *districtCode;
 @property(nonatomic,retain) NSString *complainTypeTitle;
 @property(nonatomic,retain) NSString *complainTypeCode;
-@property(nonatomic,retain) Complain *complain;
 @property(nonatomic,retain) NSURLConnection *connectionSendComplain;
 @property(nonatomic,retain) NSURLConnection *connectionGetDistrictList;
 @property(nonatomic,retain) NSURLConnection *connectionGetComplainTypeList;

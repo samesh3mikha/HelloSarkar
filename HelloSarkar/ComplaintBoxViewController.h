@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SharedStore.h"
 #import "Complain.h"
 
 @interface ComplaintBoxViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,NSFetchedResultsControllerDelegate>{
-   IBOutlet UITableView *complaintBoxTableView;
+    IBOutlet UITableView *complaintBoxTableView;
+    IBOutlet UISegmentedControl *tableSegmentedControl;
     
     NSFetchedResultsController *fetchedResultsController;
     
@@ -19,14 +21,17 @@
 
 //---------  PROPERTIES --------- 
 @property (nonatomic, retain) IBOutlet UITableView *complaintBoxTableView;
+@property (nonatomic, retain) IBOutlet UISegmentedControl *tableSegmentedControl;
 @property (nonatomic, retain) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
 //---------  IBACTION METHODS --------- 
+-(IBAction)segmentedControlClicked:(id)sender;
 
 //---------  URLCONNECTION METHODS --------- 
 
 //---------  CUSTOM METHODS ---------
 -(void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+-(void)LoadTableForSegment;
 
 @end

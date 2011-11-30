@@ -85,7 +85,7 @@
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<bool key="IBUIEnabled">NO</bool>
 								<int key="IBUIContentVerticalAlignment">0</int>
-								<string key="IBUIText"/>
+								<string key="IBUIText">a</string>
 								<int key="IBUIBorderStyle">3</int>
 								<string key="IBUIPlaceholder">Name</string>
 								<object class="NSColor" key="IBUITextColor">
@@ -120,7 +120,7 @@
 								<int key="IBUITag">2</int>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<int key="IBUIContentVerticalAlignment">0</int>
-								<string key="IBUIText"/>
+								<string key="IBUIText">c</string>
 								<int key="IBUIBorderStyle">3</int>
 								<string key="IBUIPlaceholder">Address</string>
 								<object class="NSColor" key="IBUITextColor">
@@ -150,7 +150,7 @@
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<bool key="IBUIEnabled">NO</bool>
 								<int key="IBUIContentVerticalAlignment">0</int>
-								<string key="IBUIText"/>
+								<string key="IBUIText">b</string>
 								<int key="IBUIBorderStyle">3</int>
 								<string key="IBUIPlaceholder">District</string>
 								<object class="NSColor" key="IBUITextColor">
@@ -180,7 +180,7 @@
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<bool key="IBUIEnabled">NO</bool>
 								<int key="IBUIContentVerticalAlignment">0</int>
-								<string key="IBUIText"/>
+								<string key="IBUIText">e</string>
 								<int key="IBUIBorderStyle">3</int>
 								<string key="IBUIPlaceholder">Complain</string>
 								<object class="NSColor" key="IBUITextColor">
@@ -209,7 +209,7 @@
 								<int key="IBUITag">3</int>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<int key="IBUIContentVerticalAlignment">0</int>
-								<string key="IBUIText"/>
+								<string key="IBUIText">d</string>
 								<int key="IBUIBorderStyle">3</int>
 								<string key="IBUIPlaceholder">Mobile</string>
 								<object class="NSColor" key="IBUITextColor">
@@ -265,7 +265,7 @@
 								<bool key="IBUIMultipleTouchEnabled">YES</bool>
 								<int key="IBUITag">4</int>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText"/>
+								<string key="IBUIText">g</string>
 								<object class="NSFont" key="IBUIFont">
 									<string key="NSName">Helvetica</string>
 									<double key="NSSize">17</double>
@@ -273,6 +273,7 @@
 								</object>
 								<object class="IBUITextInputTraits" key="IBUITextInputTraits">
 									<int key="IBUIAutocapitalizationType">2</int>
+									<int key="IBUIAutocorrectionType">1</int>
 									<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								</object>
 							</object>
@@ -495,7 +496,7 @@
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<bool key="IBUIEnabled">NO</bool>
 								<int key="IBUIContentVerticalAlignment">0</int>
-								<string key="IBUIText"/>
+								<string key="IBUIText">f</string>
 								<int key="IBUIBorderStyle">3</int>
 								<string key="IBUIPlaceholder">Date</string>
 								<object class="NSColor" key="IBUITextColor">
@@ -796,7 +797,6 @@
 							<reference ref="40419547"/>
 							<reference ref="403766732"/>
 							<reference ref="130645091"/>
-							<reference ref="738717168"/>
 							<reference ref="171865830"/>
 							<reference ref="376914789"/>
 							<reference ref="835536260"/>
@@ -809,6 +809,7 @@
 							<reference ref="408121923"/>
 							<reference ref="642044608"/>
 							<reference ref="957332541"/>
+							<reference ref="738717168"/>
 						</object>
 						<reference key="parent" ref="191373211"/>
 						<string key="objectName">Scroll View</string>
@@ -1046,6 +1047,7 @@
 							<string>districtNameTextField</string>
 							<string>mobileTextField</string>
 							<string>nameTextField</string>
+							<string>pickerView</string>
 							<string>scrollView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -1057,6 +1059,7 @@
 							<string>UITextField</string>
 							<string>UITextField</string>
 							<string>UITextField</string>
+							<string>UIDatePicker</string>
 							<string>UIScrollView</string>
 						</object>
 					</object>
@@ -1071,6 +1074,7 @@
 							<string>districtNameTextField</string>
 							<string>mobileTextField</string>
 							<string>nameTextField</string>
+							<string>pickerView</string>
 							<string>scrollView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -1102,6 +1106,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">nameTextField</string>
 								<string key="candidateClassName">UITextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">pickerView</string>
+								<string key="candidateClassName">UIDatePicker</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">scrollView</string>

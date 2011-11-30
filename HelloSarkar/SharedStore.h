@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+#define SERVER_STRING @"http://apps.mobilenepal.net"
+#define STATUS_REPORTED @"reported" 
+#define STATUS_UNREPORTED @"unreported" 
+
 @interface SharedStore : NSObject{
 	UIColor *backColorForViews;
     UIColor *navigationBarColor;

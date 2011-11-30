@@ -17,7 +17,6 @@
 @synthesize districtCode;
 @synthesize complainTypeTitle;
 @synthesize complainTypeCode;
-@synthesize complain;
 @synthesize connectionSendComplain;
 @synthesize connectionGetDistrictList;
 @synthesize connectionGetComplainTypeList;
@@ -293,12 +292,16 @@
         NSString *responseStringSendComplain = [[[NSString alloc] initWithData:responseDataSendComplain encoding:NSUTF8StringEncoding] autorelease];
         
         NSLog(@"responseStringSendComplain STRING -->%@", responseStringSendComplain);
-    NSLog(@"COMPLIAIN --> %@",complain.name);
-//        if (responseStringSendComplain.length == 6) {
-//            complain.serverID = responseStringSendComplain;
-//            [self updateDB];
-//        }
-//        NSLog(@"COMPLIAIN --> %@",complain.serverID);
+        if (responseStringSendComplain.length == 6) {
+            complain.serverID = responseStringSendComplain;
+            complain.status = STATUS_REPORTED;
+            [self updateDB];
+        }
+        else {
+            
+        }
+        NSLog(@"COMPLIAIN --> %@",complain);
+        [complain release];
         
         self.connectionSendComplain = nil;        
     }
@@ -310,32 +313,30 @@
         responseDictionary = [XMLReader dictionaryForXMLString:responseStringGetDistrictList error:&error];
         
         [SharedStore store].districtArray = (NSMutableArray *)[[responseDictionary valueForKey:@"districts"] valueForKey:@"district"];
-//        NSLog(@"DISTRICT ARRAY STRING -->%@", [SharedStore store].districtArray);
-//        NSLog(@"DISTRICT ARRAY STRING -->%d", [[SharedStore store].districtArray count]);
         
         [[NSUserDefaults standardUserDefaults] setObject:[SharedStore store].districtArray forKey:@"districtArray"];
         [[NSUserDefaults standardUserDefaults] synchronize];
         
         self.connectionGetDistrictList = nil;
         
+        NSLog(@"responseStringSendComplain STRING -->%@", responseStringGetDistrictList);
         [self getComplainTypeFromServer];
     }    
     else if (connection == connectionGetComplainTypeList){
         NSString *responseStringGetComplainTypeList = [[[NSString alloc] initWithData:responseDataGetComplainTypeList encoding:NSUTF8StringEncoding] autorelease];
         
-//       NSLog(@"responseStringGetComplainTypeList STRING -->%@", responseStringGetComplainTypeList);
         NSDictionary *responseDictionary = [[NSDictionary alloc] init];
         NSError *error;
         responseDictionary = [XMLReader dictionaryForXMLString:responseStringGetComplainTypeList error:&error];
 
         [SharedStore store].complainTypeArray = (NSMutableArray *)[[responseDictionary valueForKey:@"categories"] valueForKey:@"category"];
-//        NSLog(@"complainTypeArray ARRAY STRING -->%@", [SharedStore store].complainTypeArray);
-//        NSLog(@"complainTypeArray ARRAY STRING -->%d", [[SharedStore store].complainTypeArray count]);
         
         [[NSUserDefaults standardUserDefaults] setObject:[SharedStore store].complainTypeArray forKey:@"complainTypeArray"];
         [[NSUserDefaults standardUserDefaults] synchronize];
 
         self.connectionGetComplainTypeList = nil;
+
+        NSLog(@"responseStringSendComplain STRING -->%@", responseStringGetComplainTypeList);
     }
 }
 
@@ -387,53 +388,31 @@
 }
 
 -(void)saveComplainInDB{
-    Complain *newComplain = [NSEntityDescription insertNewObjectForEntityForName:@"Complain" inManagedObjectContext:self.managedObjectContext];
-    
-    NSInteger ID;
-    NSString *name = nameTextField.text;
-    NSString *address = addressTextField.text;
-    NSString *mobile = mobileTextField.text;
-    NSString *complainText = complainTextView.text;
-
     // CHECK IF ATIST IS ALREADY CREATED
     NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Complain" inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
     NSError *error = nil;
     NSArray *complains = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
-
-    ID = complains.count + 1;
-    name = @"aaa";
-    address = @"bb";
-    mobile = @"ff";
-    complainText = @"ee";
     
-    newComplain.ID = [NSNumber numberWithInt:ID];
-    newComplain.name = name;
-    newComplain.district = districtName;
-    newComplain.address = address;
-    newComplain.mobile = mobile;
-    newComplain.complaintype = complainTypeTitle;
-    newComplain.sendDate = [pickerView date];
-    newComplain.latitude = @"85.34";
-    newComplain.longitude = @"22.45";
-    newComplain.complainText = complainText;
+    districtName =@"BKT";
+    complainTypeTitle = @"General";
+    
+    complain = [[NSEntityDescription insertNewObjectForEntityForName:@"Complain" inManagedObjectContext:self.managedObjectContext] retain];
+    
+    complain.ID = [NSNumber numberWithInt:(complains.count + 1)];
+    complain.name = nameTextField.text;
+    complain.district = districtName;
+    complain.address = addressTextField.text;
+    complain.mobile = mobileTextField.text;
+    complain.complaintype = complainTypeTitle;
+    complain.sendDate = [pickerView date];
+    complain.latitude = @"85.34";
+    complain.longitude = @"22.45";
+    complain.complainText = complainTextView.text;
+    complain.status = STATUS_UNREPORTED;
     
     [self updateDB];
-   
-    
-    // CHECK IF ATIST IS ALREADY CREATED
-    fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
-    entity = [NSEntityDescription entityForName:@"Complain" inManagedObjectContext:self.managedObjectContext];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ID = %d", ID];
-    [fetchRequest setEntity:entity];
-    [fetchRequest setPredicate:predicate];
-    error = nil;
-    complains = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
-    if (complains.count > 0) {
-        complain = [complains objectAtIndex:0];
-    }
-     NSLog(@"COMPLIAIN ----------------------> %d",complain.ID.intValue);
 }
 
 -(void)deleteComplainFromDB{

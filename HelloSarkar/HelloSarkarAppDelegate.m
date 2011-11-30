@@ -203,7 +203,7 @@
     
     // ASSIGNING TITLE FOR VIEW CONTROLLERS
     complainViewController.title = @"Complain";
-    complaintBoxViewController.title = @"Complaint Box";
+    complaintBoxViewController.title = @"My complains";
         
     // POINTING VIEW CONTROLLER'S MANAGEDOBJECTCONTEXT TO APPDELEGATE'S MANAGEDOBJECTCONTEXT
     complainViewController.managedObjectContext = self.managedObjectContext;
@@ -219,7 +219,7 @@
 
     //ASSIGINING ICON N TITLE FOR EACH TAB
     complainNavigationController.tabBarItem = [[[UITabBarItem alloc] initWithTitle:@"Complain" image:[UIImage imageNamed:nil] tag:0] autorelease];
-    complaintBoxNavigationController.tabBarItem = [[[UITabBarItem alloc] initWithTitle:@"ComplaintBox" image:[UIImage imageNamed:nil] tag:1] autorelease];
+    complaintBoxNavigationController.tabBarItem = [[[UITabBarItem alloc] initWithTitle:@"My complains" image:[UIImage imageNamed:nil] tag:1] autorelease];
     
     tabBarController.viewControllers = [NSArray arrayWithObjects: complainNavigationController, complaintBoxNavigationController, nil];
     

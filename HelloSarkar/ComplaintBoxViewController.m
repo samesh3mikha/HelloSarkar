@@ -11,6 +11,7 @@
 @implementation ComplaintBoxViewController
 
 @synthesize complaintBoxTableView;
+@synthesize tableSegmentedControl;
 @synthesize fetchedResultsController;
 @synthesize managedObjectContext;
 
@@ -27,20 +28,23 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    tableSegmentedControl.segmentedControlStyle = UISegmentedControlStyleBezeled;
+    tableSegmentedControl.tintColor = [SharedStore store].navigationBarColor;
     
-    NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Complain" inManagedObjectContext:self.managedObjectContext];
-    [fetchRequest setEntity:entity];
-    NSError *error = nil;
-    NSArray *artists = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
-    
-    NSLog(@"COUNT --> %d", [artists count]);
+    complaintBoxTableView.backgroundColor = [UIColor clearColor];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+//
+#pragma mark -
+#pragma mark ---------- IBACTION METHODS ----------
+
+-(IBAction)segmentedControlClicked:(id)sender{
+    [self LoadTableForSegment];
 }
 
 #pragma mark -
@@ -75,8 +79,8 @@
     Complain *complain = [self.fetchedResultsController objectAtIndexPath:indexPath];
 
     cell.textLabel.text = complain.complainText;
-    cell.detailTextLabel.text = complain.complaintype;    
-    //    cell.textLabel.textColor = [SharedStore store].tableViewTextFontColor;
+    cell.detailTextLabel.text = complain.complaintype;
+    //    cell.detailTextLabel.text = [NSString stringWithFormat:@"%d", [complain.ID intValue]];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -89,24 +93,23 @@
 //override fetchedResultsController getter
 - (NSFetchedResultsController *)fetchedResultsController {
 	if (fetchedResultsController == nil) {		
+        NSLog(@"FFFFFfFFFFFFFfffetchedResultsController");
 		NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
 		NSEntityDescription *entity = [NSEntityDescription entityForName:@"Complain" inManagedObjectContext:self.managedObjectContext];
         [fetchRequest setFetchBatchSize:20];
 		[fetchRequest setEntity:entity];
         
-//        NSPredicate *predicate = nil;
-//        if ([[self.searchPredicate stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0) {
-//            predicate = [NSPredicate predicateWithFormat:@"artist_name BEGINSWITH[cd] %@ ", searchPredicate];
-//		}
-//        [fetchRequest setPredicate:predicate];
-        
-        //        NSDictionary *entityProperties = [entity propertiesByName];
-        //        [fetchRequest setPropertiesToFetch:[NSArray arrayWithObjects: [entityProperties objectForKey:@"artist"], nil]];
-        //        [fetchRequest setReturnsDistinctResults:YES];        
-        //        [fetchRequest setResultType:NSDictionaryResultType];
-        
+        NSPredicate *predicate;
+        if (tableSegmentedControl.selectedSegmentIndex == 0) {
+            predicate = [NSPredicate predicateWithFormat:@"status = %@", STATUS_UNREPORTED];            
+        }
+        else {
+            predicate = [NSPredicate predicateWithFormat:@"status = %@", STATUS_REPORTED];
+        }
+        [fetchRequest setPredicate:predicate];
+                
         NSSortDescriptor *sortDescriptor;
-        sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES selector:@selector(caseInsensitiveCompare:)] autorelease];
+        sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"ID" ascending:YES selector:@selector(caseInsensitiveCompare:)] autorelease];
         [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
 		
 		fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
@@ -164,6 +167,16 @@
 	[self.complaintBoxTableView endUpdates];
 }
 
+#pragma mark -
+#pragma mark ---------- CUSTOM METHODS ----------
+
+-(void)LoadTableForSegment{
+    if (tableSegmentedControl.selectedSegmentIndex == 0) {
+        
+    }
+    self.fetchedResultsController = nil;
+    [complaintBoxTableView reloadData];
+}
 
 #pragma mark - 
 #pragma mark ---------- MEMORY MANAGEMENT ----------
@@ -184,6 +197,7 @@
 
 - (void)dealloc {
     [complaintBoxTableView release];
+    [tableSegmentedControl release];
     [fetchedResultsController release];
     [managedObjectContext release];
     [super dealloc];
