@@ -7,14 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 #import "SharedStore.h"
 #import "XMLReader.h"
 #import "Complain.h"
+#import "EditFieldCell.h"
 #import "DistrictViewController.h"
 #import "ComplainTypeViewController.h"
 
-@interface ComplainViewController : UIViewController <UITextFieldDelegate, UIScrollViewDelegate, UIActionSheetDelegate, UIAlertViewDelegate>{
+@interface ComplainViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate,  UITextViewDelegate, UIScrollViewDelegate, UIActionSheetDelegate, UIAlertViewDelegate, EditFieldCellDelegate>{
     IBOutlet UIScrollView *scrollView;
+    IBOutlet UITableView *complainsTableView;
     IBOutlet UITextField *nameTextField;
     IBOutlet UITextField *districtNameTextField;
     IBOutlet UITextField *addressTextField;
@@ -38,6 +41,7 @@
 
 //---------  PROPERTIES --------- 
 @property (nonatomic, retain) IBOutlet UIScrollView *scrollView;
+@property (nonatomic, retain) IBOutlet UITableView *complainsTableView;
 @property(nonatomic,retain) IBOutlet UITextField *nameTextField;
 @property(nonatomic,retain) IBOutlet UITextField *districtNameTextField;
 @property(nonatomic,retain) IBOutlet UITextField *addressTextField;
@@ -70,9 +74,11 @@
 -(void)sendComplainToServer;
 
 //---------  CUSTOM METHODS ---------
+-(void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 -(void)relocateScrollViewBounds:(NSInteger)tag;
 -(void)showDistrictList;
 -(void)showComplainTypeList;
+-(void)showDatePicker;
 -(void)fillValues;
 -(void)saveComplainInDB;
 -(void)deleteComplainFromDB;

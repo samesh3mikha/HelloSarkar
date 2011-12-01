@@ -31,6 +31,8 @@
 		01749781148126ED008C1A94 /* SharedStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 01749780148126ED008C1A94 /* SharedStore.m */; };
 		01B1289B1486968D003DDD2F /* Complain.m in Sources */ = {isa = PBXBuildFile; fileRef = 01B1289A1486968C003DDD2F /* Complain.m */; };
 		01D7F3EE1481C976008B3B2D /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 01D7F3ED1481C976008B3B2D /* background.jpg */; };
+		46396A8814876A4900413F05 /* EditFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 46396A8614876A4900413F05 /* EditFieldCell.m */; };
+		46396A8914876A4900413F05 /* EditFieldCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 46396A8714876A4900413F05 /* EditFieldCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +73,9 @@
 		01B128991486968C003DDD2F /* Complain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Complain.h; sourceTree = "<group>"; };
 		01B1289A1486968C003DDD2F /* Complain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Complain.m; sourceTree = "<group>"; };
 		01D7F3ED1481C976008B3B2D /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
+		46396A8514876A4900413F05 /* EditFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditFieldCell.h; sourceTree = "<group>"; };
+		46396A8614876A4900413F05 /* EditFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditFieldCell.m; sourceTree = "<group>"; };
+		46396A8714876A4900413F05 /* EditFieldCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditFieldCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,6 +189,8 @@
 		017497491480CBFF008C1A94 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				46396A8514876A4900413F05 /* EditFieldCell.h */,
+				46396A8614876A4900413F05 /* EditFieldCell.m */,
 				0174977F148126ED008C1A94 /* SharedStore.h */,
 				01749780148126ED008C1A94 /* SharedStore.m */,
 				0174976B1480F22E008C1A94 /* XMLReader.h */,
@@ -196,7 +203,7 @@
 			isa = PBXGroup;
 			children = (
 				017497571480CD51008C1A94 /* Complain */,
-				017497561480CD4C008C1A94 /* Complaintbox */,
+				017497561480CD4C008C1A94 /* MyComplains */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -222,6 +229,7 @@
 			isa = PBXGroup;
 			children = (
 				0174975A1480CE20008C1A94 /* ComplainViewController.xib */,
+				46396A8714876A4900413F05 /* EditFieldCell.xib */,
 				0174975F1480D486008C1A94 /* ComplaintBoxViewController.xib */,
 				0174977714811DD3008C1A94 /* DistrictViewController.xib */,
 				0174977C14811DF2008C1A94 /* ComplainTypeViewController.xib */,
@@ -229,13 +237,13 @@
 			name = Xibs;
 			sourceTree = "<group>";
 		};
-		017497561480CD4C008C1A94 /* Complaintbox */ = {
+		017497561480CD4C008C1A94 /* MyComplains */ = {
 			isa = PBXGroup;
 			children = (
 				0174975D1480D486008C1A94 /* ComplaintBoxViewController.h */,
 				0174975E1480D486008C1A94 /* ComplaintBoxViewController.m */,
 			);
-			name = Complaintbox;
+			name = MyComplains;
 			sourceTree = "<group>";
 		};
 		017497571480CD51008C1A94 /* Complain */ = {
@@ -306,6 +314,7 @@
 				0174977914811DD3008C1A94 /* DistrictViewController.xib in Resources */,
 				0174977E14811DF2008C1A94 /* ComplainTypeViewController.xib in Resources */,
 				01D7F3EE1481C976008B3B2D /* background.jpg in Resources */,
+				46396A8914876A4900413F05 /* EditFieldCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,6 +337,7 @@
 				0174977D14811DF2008C1A94 /* ComplainTypeViewController.m in Sources */,
 				01749781148126ED008C1A94 /* SharedStore.m in Sources */,
 				01B1289B1486968D003DDD2F /* Complain.m in Sources */,
+				46396A8814876A4900413F05 /* EditFieldCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

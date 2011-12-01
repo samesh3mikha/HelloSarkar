@@ -11,6 +11,7 @@
 @implementation ComplainViewController
 
 @synthesize scrollView;
+@synthesize complainsTableView;
 @synthesize nameTextField, districtNameTextField, addressTextField, mobileTextField, complainTypeTitleTextField, dateTextField, complainTextView;
 @synthesize pickerView;
 @synthesize districtName;
@@ -64,7 +65,13 @@
 {
     [super viewDidLoad];    
     self.view.backgroundColor = [SharedStore store].backColorForViews;
-
+    self.complainsTableView.backgroundColor = [UIColor clearColor];
+    
+    complainTextView.layer.borderWidth = 1.0f;
+	complainTextView.layer.borderColor = [[UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1] CGColor];
+//	[complainTextView.layer setMasksToBounds:YES];
+	[complainTextView.layer setCornerRadius:5.0];
+    
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"yyyy/MM/dd"];
     NSDate *now = [NSDate date];    
@@ -78,7 +85,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    scrollView.contentSize = CGSizeMake(320, 640);
+    scrollView.contentSize = CGSizeMake(320, 481);
     CGRect scrollBounds = scrollView.bounds;
     scrollBounds.origin.y = 0;
     [scrollView scrollRectToVisible:scrollBounds animated:YES];
@@ -117,41 +124,142 @@
 }
 
 -(IBAction)selectDateClicked:(id)sender{
-    UIActionSheet *menu = [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Done" destructiveButtonTitle:nil otherButtonTitles:nil] autorelease];
-
-    // Add the picker
-    pickerView.datePickerMode = UIDatePickerModeDate;
-    [menu addSubview:pickerView];
-    [menu showInView:self.navigationController.tabBarController.view];        
-    [menu setBounds:CGRectMake(0,0,320, 516)];
-    [pickerView setFrame:CGRectMake(0, 85, 320, 216)];
+    [self showDatePicker];
 }
 
 
 #pragma mark -
+#pragma mark ---------- UITABLEVIEW DELEGATE METHODS ----------
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {    
+    return 6;
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 40;
+}
+
+// Customize the appearance of table view cells.
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    static NSString *CellIdentifier = @"Cell";
+    
+	EditFieldCell *cell = (EditFieldCell *) [tableView dequeueReusableCellWithIdentifier:CellIdentifier];  
+    if (cell == nil){  
+        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"EditFieldCell" owner:nil options:nil];  
+        for(id currentObject in topLevelObjects) {  
+            if([currentObject isKindOfClass:[EditFieldCell class]]) {  
+                cell = (EditFieldCell *) currentObject;  
+                break;  
+            }  
+        }  
+    }  
+	
+	// Next line is very important ...   
+    // you have to set the delegate from the cell back to this class  
+    [cell setDelegate:self];
+    
+	// Configure the cell..
+    [self configureCell:cell atIndexPath:indexPath];
+    
+	return cell;
+}
+
+// Configure CELL
+-(void)configureCell:(EditFieldCell *)cell atIndexPath:(NSIndexPath *)indexPath{
+    
+//    cell.textLabel.text = (NSString *)[districtListArray objectAtIndex:indexPath.row];
+    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+    [cell.textField setFont:[UIFont systemFontOfSize:15]];
+    if (indexPath.row == 1 || indexPath.row == 4) {
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
+    else if (indexPath.row == 5) {
+        cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
+    }
+    else {
+        cell.userInteractionEnabled  = YES;
+//        cell.selectionStyle = UITableViewCellSelectionStyleNone;        
+    }
+    
+    if (indexPath.row == 0) {
+        cell.textField.placeholder = @"NAME";
+    }
+    else if (indexPath.row == 1) {
+        cell.textField.placeholder = @"DISTRICT";
+    }
+    else if (indexPath.row == 2) {
+        cell.textField.placeholder = @"ADDRESS";
+    }
+    else if (indexPath.row == 3) {
+        cell.textField.placeholder = @"MOBILE";
+    }
+    else if (indexPath.row == 4) {
+        cell.textField.placeholder = @"COMPLAIN CATEGORY";
+    }
+    else if (indexPath.row == 5) {
+        cell.textField.placeholder = @"DATE";
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    EditFieldCell *cell = (EditFieldCell *)[self.complainsTableView cellForRowAtIndexPath:indexPath];
+    
+    if (indexPath.row == 1) {
+        [self showDistrictList];
+    }
+    else if (indexPath.row == 4) {
+        [self showComplainTypeList];
+    }
+    else if (indexPath.row == 5) {
+        [self showDatePicker];
+    }
+    else {
+        [cell assignAsFirstResponder];
+    }
+
+}
+
+#pragma mark -
+#pragma mark ---------- EDITFIELDCELL DELEGATE METHODS ----------
+
+- (void)relocateScrollView:(CGRect)cellFrame{
+    [self relocateScrollViewBounds:0];
+}
+
+-(void)resetScrollContent{
+    scrollView.contentSize = CGSizeMake(320, 481);
+}
+
+#pragma mark -
 #pragma mark ---------- UITEXTFIELD DELEGATE METHODS ----------
-- (void)textFieldDidBeginEditing:(UITextField *)tf {
-    [self relocateScrollViewBounds:tf.tag];
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    [self relocateScrollViewBounds:textField.tag];
 }
-
-- (void)textViewDidBeginEditing:(UITextField *)tf {
-    [self relocateScrollViewBounds:tf.tag];
-}
-
     
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {	
     NSLog(@"textFieldShouldReturn");
-    [nameTextField resignFirstResponder];
-    [addressTextField resignFirstResponder];
-    [mobileTextField resignFirstResponder];
-    [complainTextView resignFirstResponder];
+    [textField resignFirstResponder];
+
     
     return YES;
 }
 
--(BOOL)textViewShouldReturn:(UITextField *)textField {	
-    [complainTextView resignFirstResponder];
+#pragma mark -
+#pragma mark ---------- UITEXTVIEW DELEGATE METHODS ----------
 
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    [self relocateScrollViewBounds:textView.tag];
+}
+
+
+-(BOOL)textViewShouldReturn:(UITextView *)textView {	
+    NSLog(@"textViewShouldReturn");
+    [textView resignFirstResponder];
+    
     return YES;
 }
 
@@ -363,20 +471,14 @@
 #pragma mark ---------- CUSTOM METHODS ----------
 
 -(void)relocateScrollViewBounds:(NSInteger)tag{
-    scrollView.contentSize = CGSizeMake(320, 640);
+    scrollView.contentSize = CGSizeMake(320, 645);
     
 	CGRect scrollBounds = scrollView.bounds;
-    if (tag == 1) {
+    if (tag == 0) {
         scrollBounds.origin.y = 0;
     }
-    else if(tag == 2){        
-        scrollBounds.origin.y = 60;
-    }
-    else if(tag == 3){        
-        scrollBounds.origin.y = 80;
-    }
-    else if(tag == 4){        
-        scrollBounds.origin.y = 120;
+    else if(tag == 1){        
+        scrollBounds.origin.y = 180;
     }
     [scrollView scrollRectToVisible:scrollBounds animated:YES];
 }
@@ -391,6 +493,17 @@
     ComplainTypeViewController *complainTypeViewController = [[[ComplainTypeViewController alloc] initWithNibName:@"ComplainTypeViewController" bundle:nil] autorelease];
     complainTypeViewController.title = @"Complain Categories";
     [self.navigationController pushViewController:complainTypeViewController animated:YES];
+}
+
+-(void)showDatePicker{
+    UIActionSheet *menu = [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Done" destructiveButtonTitle:nil otherButtonTitles:nil] autorelease];
+    
+    // Add the picker
+    [pickerView setFrame:CGRectMake(0, 85, 320, 216)];
+    pickerView.datePickerMode = UIDatePickerModeDate;
+    [menu addSubview:pickerView];
+    [menu showInView:self.navigationController.tabBarController.view];        
+    [menu setBounds:CGRectMake(0,0,320, 516)];
 }
 
 -(void)fillValues{
@@ -480,6 +593,7 @@
 
 - (void)dealloc {
     [scrollView release];
+    [complainsTableView release];
     [nameTextField release];
     [districtNameTextField release];
     [addressTextField release];
