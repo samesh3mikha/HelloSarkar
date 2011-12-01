@@ -55,6 +55,9 @@
 @property(nonatomic,retain) NSURLConnection *connectionGetComplainTypeList;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
+//---------  SELF METHODS ---------
+-(id) initWithComplain:(Complain *)_complain inEditingMode:(BOOL)editable;
+
 //---------  IBACTION METHODS --------- 
 -(IBAction)sendComplainButtonClicked:(id)sender;
 -(IBAction)selectDistrictClicked:(id)sender;

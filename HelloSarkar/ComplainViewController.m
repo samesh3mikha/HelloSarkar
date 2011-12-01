@@ -42,6 +42,24 @@
     return self;
 }
 
+
+-(id) initWithComplain:(Complain *)_complain inEditingMode:(BOOL)editable{
+	if((self = [super init])){
+        pickerView = [[UIDatePicker alloc] init];
+        districtName = [[NSString alloc] init];
+        districtCode = [[NSString alloc] init];
+        complainTypeTitle = [[NSString alloc] init];
+        districtName = @"";
+        districtCode = @"";
+        complainTypeTitle = @"";
+        complainTypeCode = @"";
+        responseDataSendComplain = [[NSMutableData data] retain];
+        responseDataGetDistrictList = [[NSMutableData data] retain];
+        responseDataGetComplainTypeList = [[NSMutableData data] retain];        
+	}
+	return self;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];    

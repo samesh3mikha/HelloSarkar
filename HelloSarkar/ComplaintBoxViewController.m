@@ -69,7 +69,8 @@
     }
     
 	// Configure the cell..
-    [self configureCell:cell atIndexPath:indexPath];
+    [self configureCell:cell atIndexPath:indexPath];    
+    cell.selectionStyle = UITableViewCellSelectionStyleGray;
     
 	return cell;
 }
@@ -85,6 +86,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    if (tableSegmentedControl.selectedSegmentIndex == 0) {
+    //UN-REPORTED
+        
+    }
 }
 
 #pragma mark -
@@ -171,9 +177,9 @@
 #pragma mark ---------- CUSTOM METHODS ----------
 
 -(void)LoadTableForSegment{
-    if (tableSegmentedControl.selectedSegmentIndex == 0) {
-        
-    }
+//    if (tableSegmentedControl.selectedSegmentIndex == 0) {
+//        
+//    }
     self.fetchedResultsController = nil;
     [complaintBoxTableView reloadData];
 }
