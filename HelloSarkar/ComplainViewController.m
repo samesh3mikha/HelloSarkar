@@ -75,6 +75,8 @@
 
     [self resetScrollContent];
     
+    NSLog(@"COMPLAIN ------> %@", complain);
+
     if(![complain.district isEqualToString:[SharedStore store].districtName] || ![complain.complaintype isEqualToString:[SharedStore store].complainTypeTitle]){
         complain.district = [SharedStore store].districtName;
         districtCode = [SharedStore store].districtCode;
@@ -410,9 +412,11 @@
         else {
             
         }
-        [complain release];
-        
         self.connectionSendComplain = nil;        
+
+        [complain release];
+        [self loadInitialvalues];
+        [self.complainsTableView reloadData];        
     }
     else if (connection == connectionGetDistrictList){
         NSString *responseStringGetDistrictList = [[[NSString alloc] initWithData:responseDataGetDistrictList encoding:NSUTF8StringEncoding] autorelease];
@@ -465,7 +469,9 @@
         complain.latitude = @"85.34";
         complain.longitude = @"22.45";
         complain.complainText = @"";
-        complain.status = STATUS_UNREPORTED;        
+        complain.status = STATUS_UNREPORTED;
+        
+        complainTextView.text = complain.complainText;
     }
     else if (actionMode == COMPLAIN_EDITING) {
         
@@ -535,7 +541,6 @@
 -(BOOL)validateData{
     BOOL dataValid = YES;
     
-    NSLog(@"COMPLAIN ------> %@", complain);
     if ([complain.name isEqualToString:@""] || [complain.district isEqualToString:@""] || [complain.address isEqualToString:@""] || [complain.mobile isEqualToString:@""] || [complain.complaintype isEqualToString:@""] || [complain.complainText isEqualToString:@""]) {
         dataValid = NO;
         
@@ -562,6 +567,8 @@
     complain.complainText = complainTextView.text;
     
     [self updateDB];
+    
+    NSLog(@"COMPLAIN ------> %@", complain);
 }
 
 -(void)deleteComplainFromDB{
