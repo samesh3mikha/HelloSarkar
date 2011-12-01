@@ -103,6 +103,9 @@
         [districtListArray addObject:[districtDictionary valueForKey:@"text"]];
     }    
     
+    // DUMMY DATA
+    [districtCodeListArray addObjectsFromArray:[NSArray arrayWithObjects:@"BKT", @"KTM", @"LTP", nil]];
+    [districtListArray addObjectsFromArray:[NSArray arrayWithObjects:@"Bhaktapur", @"Kathmandu", @"Lalitpur", nil]];
     NSLog(@"COde --> %@", districtCodeListArray);
     NSLog(@"DISTRICTS --> %@", districtListArray);
 }

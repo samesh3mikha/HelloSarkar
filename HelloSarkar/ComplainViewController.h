@@ -18,18 +18,11 @@
 @interface ComplainViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate,  UITextViewDelegate, UIScrollViewDelegate, UIActionSheetDelegate, UIAlertViewDelegate, EditFieldCellDelegate>{
     IBOutlet UIScrollView *scrollView;
     IBOutlet UITableView *complainsTableView;
-    IBOutlet UITextField *nameTextField;
-    IBOutlet UITextField *districtNameTextField;
-    IBOutlet UITextField *addressTextField;
-    IBOutlet UITextField *mobileTextField;
-    IBOutlet UITextField *complainTypeTitleTextField;
-    IBOutlet UITextField *dateTextField;
     IBOutlet UITextView *complainTextView;
     UIDatePicker *pickerView;
     
-    NSString *districtName;
+    NSInteger actionMode;
     NSString *districtCode;
-    NSString *complainTypeTitle;
     NSString *complainTypeCode;
     
     Complain *complain;
@@ -42,17 +35,9 @@
 //---------  PROPERTIES --------- 
 @property (nonatomic, retain) IBOutlet UIScrollView *scrollView;
 @property (nonatomic, retain) IBOutlet UITableView *complainsTableView;
-@property(nonatomic,retain) IBOutlet UITextField *nameTextField;
-@property(nonatomic,retain) IBOutlet UITextField *districtNameTextField;
-@property(nonatomic,retain) IBOutlet UITextField *addressTextField;
-@property(nonatomic,retain) IBOutlet UITextField *mobileTextField;
-@property(nonatomic,retain) IBOutlet UITextField *complainTypeTitleTextField;
-@property(nonatomic,retain) IBOutlet UITextField *dateTextField;
 @property(nonatomic,retain) IBOutlet UITextView *complainTextView;
 @property(nonatomic,retain) IBOutlet UIDatePicker *pickerView;
-@property(nonatomic,retain) NSString *districtName;
 @property(nonatomic,retain) NSString *districtCode;
-@property(nonatomic,retain) NSString *complainTypeTitle;
 @property(nonatomic,retain) NSString *complainTypeCode;
 @property(nonatomic,retain) NSURLConnection *connectionSendComplain;
 @property(nonatomic,retain) NSURLConnection *connectionGetDistrictList;
@@ -64,9 +49,6 @@
 
 //---------  IBACTION METHODS --------- 
 -(IBAction)sendComplainButtonClicked:(id)sender;
--(IBAction)selectDistrictClicked:(id)sender;
--(IBAction)selectComplainTypeClicked:(id)sender;
--(IBAction)selectDateClicked:(id)sender;
 
 //---------  URLCONNECTION METHODS --------- 
 -(void)getDistrictListFromServer;
@@ -75,15 +57,17 @@
 
 //---------  CUSTOM METHODS ---------
 -(void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+-(void)loadInitialvalues;
+-(void)fillDate:(EditFieldCell *)cell;
+-(void)resetScrollContent;
 -(void)relocateScrollViewBounds:(NSInteger)tag;
 -(void)showDistrictList;
 -(void)showComplainTypeList;
 -(void)showDatePicker;
--(void)fillValues;
+-(void)showResendAlerView;
+-(BOOL)validateData;
 -(void)saveComplainInDB;
 -(void)deleteComplainFromDB;
 -(void)updateDB;
--(void)showResendAlerView;
--(void)resetForm;
 
 @end

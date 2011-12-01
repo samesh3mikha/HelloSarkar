@@ -15,7 +15,7 @@
 @protocol EditFieldCellDelegate <NSObject>
 // we will make one function mandatory to include
 -(void)relocateScrollView:(CGRect)cellFrame;
--(void)resetScrollContent;
+-(void)resignResponder:(NSInteger)tag withText:(NSString *)text;
 
 @optional  
 // and the other one is optional (this function has not been used in this tutorial)  
@@ -24,10 +24,12 @@
 
 
 @interface EditFieldCell : UITableViewCell <UITextFieldDelegate> {  
+  	IBOutlet UILabel *fieldLabel;
     IBOutlet UITextField *textField;
     
     id <EditFieldCellDelegate> delegate;  
 }  
+@property (nonatomic, retain) IBOutlet UILabel *fieldLabel;
 @property (nonatomic, retain) IBOutlet UITextField *textField;  
 @property (nonatomic, assign) id <EditFieldCellDelegate> delegate;  
 

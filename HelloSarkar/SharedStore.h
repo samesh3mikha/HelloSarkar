@@ -12,6 +12,10 @@
 #define STATUS_REPORTED @"reported" 
 #define STATUS_UNREPORTED @"unreported" 
 
+#define COMPLAIN_CREATING 0
+#define COMPLAIN_EDITING 1
+#define COMPLAIN_DISPLAYING 2
+
 @interface SharedStore : NSObject{
 	UIColor *backColorForViews;
     UIColor *navigationBarColor;

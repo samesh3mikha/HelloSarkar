@@ -115,7 +115,7 @@
         [fetchRequest setPredicate:predicate];
                 
         NSSortDescriptor *sortDescriptor;
-        sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"ID" ascending:YES selector:@selector(caseInsensitiveCompare:)] autorelease];
+        sortDescriptor = [[[NSSortDescriptor alloc] initWithKey:@"ID" ascending:YES] autorelease];
         [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortDescriptor, nil]];
 		
 		fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];

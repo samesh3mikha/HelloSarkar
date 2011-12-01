@@ -11,6 +11,7 @@
 
 @implementation EditFieldCell
 
+@synthesize fieldLabel;
 @synthesize textField;
 @synthesize delegate;
 
@@ -41,7 +42,7 @@
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {		
     self.textField.userInteractionEnabled = NO;
 	[self.textField resignFirstResponder];
-	[delegate resetScrollContent];
+	[delegate resignResponder:self.textField.tag withText:self.textField.text];
 	return YES;
 }
 
@@ -55,6 +56,7 @@
 }
 
 - (void)dealloc {  
+    [fieldLabel release];
     [textField release];
     [super dealloc];  
 }  

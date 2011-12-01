@@ -106,6 +106,10 @@
         [complainTypeCodeListArray addObject:[complainTypeDictionary valueForKey:@"code"]];
     }    
     
+    // DUMMY DATA
+    [complainTypeListArray addObjectsFromArray:[NSArray arrayWithObjects:@"General", @"Robbery", @"Thuggery", nil]];
+    [complainTypeCodeListArray addObjectsFromArray:[NSArray arrayWithObjects:@"Gn", @"Rob", @"Tug", nil]];
+
     NSLog(@"COMPLAIN TYPES --> %@", complainTypeListArray);
     NSLog(@"COMPLAIN TYPES --> %@", complainTypeCodeListArray);
 }
