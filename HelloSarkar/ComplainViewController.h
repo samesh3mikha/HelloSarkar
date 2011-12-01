@@ -19,6 +19,7 @@
     IBOutlet UIScrollView *scrollView;
     IBOutlet UITableView *complainsTableView;
     IBOutlet UITextView *complainTextView;
+    IBOutlet UIButton *reportBUtton;
     UIDatePicker *pickerView;
     
     NSInteger actionMode;
@@ -45,7 +46,7 @@
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
 //---------  SELF METHODS ---------
--(id) initWithComplain:(Complain *)_complain inEditingMode:(BOOL)editable;
+-(id)initWithComplain:(Complain *)_complain inMode:(NSInteger)mode;
 
 //---------  IBACTION METHODS --------- 
 -(IBAction)sendComplainButtonClicked:(id)sender;

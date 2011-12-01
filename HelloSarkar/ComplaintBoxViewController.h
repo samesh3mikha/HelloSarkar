@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HelloSarkarAppDelegate.h"
 #import "SharedStore.h"
 #import "Complain.h"
+#import "ComplainViewController.h"
 
 @interface ComplaintBoxViewController : UIViewController <UITableViewDelegate, UITableViewDataSource,NSFetchedResultsControllerDelegate>{
     IBOutlet UITableView *complaintBoxTableView;

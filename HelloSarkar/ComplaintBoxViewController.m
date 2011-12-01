@@ -86,11 +86,21 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    Complain *complain = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    NSInteger mode;
     
     if (tableSegmentedControl.selectedSegmentIndex == 0) {
-    //UN-REPORTED
-        
+    // UN-REPORTED
+        mode = COMPLAIN_EDITING;
     }
+    else if (tableSegmentedControl.selectedSegmentIndex == 1) {
+    // REPORTED
+        mode = COMPLAIN_DISPLAYING;        
+    }
+    ComplainViewController *complainViewController = [[[ComplainViewController alloc] initWithComplain:complain inMode:mode] autorelease];
+    complainViewController.title = @"Complain";
+    complainViewController.managedObjectContext = ((HelloSarkarAppDelegate *)[[UIApplication sharedApplication] delegate]).managedObjectContext;	
+    [self.navigationController pushViewController:complainViewController animated:YES];
 }
 
 #pragma mark -

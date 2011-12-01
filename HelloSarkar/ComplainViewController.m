@@ -38,14 +38,17 @@
 }
 
 
--(id) initWithComplain:(Complain *)_complain inEditingMode:(BOOL)editable{
+-(id)initWithComplain:(Complain *)_complain inMode:(NSInteger)mode{
 	if((self = [super init])){
+        // Custom initialization
+        complain = _complain;
+        actionMode = mode;
         districtCode = [[NSString alloc] init];
         districtCode = @"";
         complainTypeCode = @"";
         responseDataSendComplain = [[NSMutableData data] retain];
         responseDataGetDistrictList = [[NSMutableData data] retain];
-        responseDataGetComplainTypeList = [[NSMutableData data] retain];        
+        responseDataGetComplainTypeList = [[NSMutableData data] retain];
 	}
 	return self;
 }
@@ -60,10 +63,10 @@
     pickerView.datePickerMode = UIDatePickerModeDate;
     [pickerView setFrame:CGRectMake(0, 85, 320, 216)];
     
-    complainTextView.layer.borderWidth = 1.0f;
+    complainTextView.layer.borderWidth = 1.5f;
 	complainTextView.layer.borderColor = [[UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1] CGColor];
 //	[complainTextView.layer setMasksToBounds:YES];
-	[complainTextView.layer setCornerRadius:5.0];
+	[complainTextView.layer setCornerRadius:10.0];
     
     [self loadInitialvalues];
     
@@ -469,16 +472,22 @@
         complain.latitude = @"85.34";
         complain.longitude = @"22.45";
         complain.complainText = @"";
-        complain.status = STATUS_UNREPORTED;
-        
-        complainTextView.text = complain.complainText;
+        complain.status = STATUS_UNREPORTED;        
     }
     else if (actionMode == COMPLAIN_EDITING) {
-        
+        [SharedStore store].districtName = complain.district;
+        [SharedStore store].complainTypeTitle = complain.complaintype;
     }
     else if (actionMode == COMPLAIN_DISPLAYING) {
+        [SharedStore store].districtName = complain.district;
+        [SharedStore store].complainTypeTitle = complain.complaintype;
         
+        complainsTableView.userInteractionEnabled = NO;
+        complainTextView.userInteractionEnabled  = NO;
+        reportBUtton.userInteractionEnabled = NO;
     }
+    
+    complainTextView.text = complain.complainText;
 }
 
 -(void)fillDate:(EditFieldCell *)cell{   
