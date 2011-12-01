@@ -1,5 +1,6 @@
 .DS_Store
 HelloSarkar/build/
+build/
 
 HelloSarkar.xcodeproj/*.pbxuser
 HelloSarkar.xcodeproj/*.mode1
