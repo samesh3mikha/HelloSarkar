@@ -13,6 +13,10 @@
 @synthesize complainTypeListTableView;
 @synthesize complainTypeCodeListArray;
 @synthesize complainTypeListArray;
+@synthesize selectedIndex;
+@synthesize selectedComplainTypeCode;
+@synthesize delegate;
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -25,6 +29,16 @@
     return self;
 }
 
+-(id)initWithComplainTypeCode:(NSString *)_complainTypeCode{
+    if((self = [super init])){
+        // Custom initialization
+        complainTypeCodeListArray =[[NSMutableArray alloc] init];
+        complainTypeListArray =[[NSMutableArray alloc] init];
+        selectedComplainTypeCode = _complainTypeCode;
+	}
+	return self;
+}
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -34,6 +48,10 @@
 	complainTypeListTableView.backgroundColor = [UIColor clearColor];
 
     [self prepareComplainTypeList];
+
+    selectedIndex = [complainTypeCodeListArray indexOfObjectIdenticalTo:selectedComplainTypeCode];
+    NSLog(@"CODE --> %@", selectedComplainTypeCode);
+    NSLog(@"SELECTED INDEX --> %d", selectedIndex);
 }
 
 
@@ -67,30 +85,28 @@
 }
 
 // Configure CELL
--(void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath{
-    
+-(void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    cell.selectionStyle = UITableViewCellSelectionStyleGray;   
     cell.textLabel.text = (NSString *)[complainTypeListArray objectAtIndex:indexPath.row];
-    if (indexPath.row == [SharedStore store].complainTypeTableIndex) {
+    if (indexPath.row == selectedIndex) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     }
-    //    cell.textLabel.textColor = [SharedStore store].tableViewTextFontColor;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell;
-    if ([SharedStore store].complainTypeTableIndex >= 0) {
-        NSIndexPath *formalIndexPath = [NSIndexPath indexPathForRow:[SharedStore store].complainTypeTableIndex inSection:0];
+    if (selectedIndex >= 0) {
+        NSIndexPath *formalIndexPath = [NSIndexPath indexPathForRow:selectedIndex inSection:0];
         cell = [tableView cellForRowAtIndexPath:formalIndexPath];
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
     
-    [SharedStore store].complainTypeTableIndex = indexPath.row;
-    [SharedStore store].complainTypeTitle = [complainTypeListArray objectAtIndex:indexPath.row];
-    [SharedStore store].complainTypeCode = [complainTypeCodeListArray objectAtIndex:indexPath.row];
+    selectedIndex = indexPath.row;
     cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    [delegate selectedComplainType:[complainTypeListArray objectAtIndex:indexPath.row] withCode:[complainTypeCodeListArray objectAtIndex:indexPath.row]];
     
-    NSLog(@"[SharedStore store].complainTypeTitle --> %@", [SharedStore store].complainTypeTitle);
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -136,7 +152,8 @@
 - (void)dealloc {
     [complainTypeListTableView release];
     [complainTypeCodeListArray release];
-    [complainTypeListArray release];    
+    [complainTypeListArray release];
+    [selectedComplainTypeCode release];
     [super dealloc];
 }
 @end

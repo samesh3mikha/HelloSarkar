@@ -53,8 +53,6 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {    
     id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
     
-    NSLog(@"[sectionInfo numberOfObjects] -> %d",[sectionInfo numberOfObjects]);
-
     return [sectionInfo numberOfObjects];
 }
 
@@ -97,6 +95,8 @@
     // REPORTED
         mode = COMPLAIN_DISPLAYING;        
     }
+    NSLog(@"CELL OBJECT ------------------------");
+    NSLog(@"COMPLAIN ------> %@", complain);
     ComplainViewController *complainViewController = [[[ComplainViewController alloc] initWithComplain:complain inMode:mode] autorelease];
     complainViewController.title = @"Complain";
     complainViewController.managedObjectContext = ((HelloSarkarAppDelegate *)[[UIApplication sharedApplication] delegate]).managedObjectContext;	
@@ -109,7 +109,6 @@
 //override fetchedResultsController getter
 - (NSFetchedResultsController *)fetchedResultsController {
 	if (fetchedResultsController == nil) {		
-        NSLog(@"FFFFFfFFFFFFFfffetchedResultsController");
 		NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
 		NSEntityDescription *entity = [NSEntityDescription entityForName:@"Complain" inManagedObjectContext:self.managedObjectContext];
         [fetchRequest setFetchBatchSize:20];

@@ -15,7 +15,7 @@
 #import "DistrictViewController.h"
 #import "ComplainTypeViewController.h"
 
-@interface ComplainViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate,  UITextViewDelegate, UIScrollViewDelegate, UIActionSheetDelegate, UIAlertViewDelegate, EditFieldCellDelegate>{
+@interface ComplainViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate,  UITextViewDelegate, UIScrollViewDelegate, UIActionSheetDelegate, UIAlertViewDelegate, EditFieldCellDelegate, DistrictViewControllerDelegate, ComplainTypeViewControllerDelegate>{
     IBOutlet UIScrollView *scrollView;
     IBOutlet UITableView *complainsTableView;
     IBOutlet UITextView *complainTextView;
@@ -23,8 +23,6 @@
     UIDatePicker *pickerView;
     
     NSInteger actionMode;
-    NSString *districtCode;
-    NSString *complainTypeCode;
     
     Complain *complain;
     NSURLConnection *connectionSendComplain, *connectionGetDistrictList, *connectionGetComplainTypeList;
@@ -38,8 +36,6 @@
 @property (nonatomic, retain) IBOutlet UITableView *complainsTableView;
 @property(nonatomic,retain) IBOutlet UITextView *complainTextView;
 @property(nonatomic,retain) IBOutlet UIDatePicker *pickerView;
-@property(nonatomic,retain) NSString *districtCode;
-@property(nonatomic,retain) NSString *complainTypeCode;
 @property(nonatomic,retain) NSURLConnection *connectionSendComplain;
 @property(nonatomic,retain) NSURLConnection *connectionGetDistrictList;
 @property(nonatomic,retain) NSURLConnection *connectionGetComplainTypeList;

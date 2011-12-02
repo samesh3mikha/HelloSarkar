@@ -14,8 +14,6 @@
 @synthesize complainsTableView;
 @synthesize pickerView;
 @synthesize complainTextView;
-@synthesize districtCode;
-@synthesize complainTypeCode;
 @synthesize connectionSendComplain;
 @synthesize connectionGetDistrictList;
 @synthesize connectionGetComplainTypeList;
@@ -27,9 +25,6 @@
     if (self) {
         // Custom initialization
         actionMode = COMPLAIN_CREATING;
-        districtCode = [[NSString alloc] init];
-        districtCode = @"";
-        complainTypeCode = @"";
         responseDataSendComplain = [[NSMutableData data] retain];
         responseDataGetDistrictList = [[NSMutableData data] retain];
         responseDataGetComplainTypeList = [[NSMutableData data] retain];
@@ -37,15 +32,14 @@
     return self;
 }
 
-
 -(id)initWithComplain:(Complain *)_complain inMode:(NSInteger)mode{
 	if((self = [super init])){
         // Custom initialization
         complain = _complain;
+        NSLog(@"INITIALIZING---------");
+        NSLog(@"COMPLAIN ------> %@", complain);
+
         actionMode = mode;
-        districtCode = [[NSString alloc] init];
-        districtCode = @"";
-        complainTypeCode = @"";
         responseDataSendComplain = [[NSMutableData data] retain];
         responseDataGetDistrictList = [[NSMutableData data] retain];
         responseDataGetComplainTypeList = [[NSMutableData data] retain];
@@ -55,6 +49,7 @@
 
 - (void)viewDidLoad
 {
+    NSLog(@"viewDidLoad-------");
     [super viewDidLoad];    
     self.view.backgroundColor = [SharedStore store].backColorForViews;
     self.complainsTableView.backgroundColor = [UIColor clearColor];
@@ -70,26 +65,16 @@
     
     [self loadInitialvalues];
     
-    [self getDistrictListFromServer];
+    //[self getDistrictListFromServer];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+//    NSLog(@"viewWillAppear-------");
+//    NSLog(@"COMPLAIN ------> %@", complain);
+
     [super viewWillAppear:animated];
 
-    [self resetScrollContent];
-    
-    NSLog(@"COMPLAIN ------> %@", complain);
-
-    if(![complain.district isEqualToString:[SharedStore store].districtName] || ![complain.complaintype isEqualToString:[SharedStore store].complainTypeTitle]){
-        complain.district = [SharedStore store].districtName;
-        districtCode = [SharedStore store].districtCode;
-
-        complain.complaintype = [SharedStore store].complainTypeTitle;
-        complainTypeCode = [SharedStore store].complainTypeCode;
-
-        [self.complainsTableView reloadData];
-    }    
-//    NSLog(@"complainTypeTitle --> %@", complainTypeTitle);
+    [self resetScrollContent];    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -288,13 +273,33 @@
 #pragma mark -
 #pragma mark ---------- UIALERTVIEW DELEGATE METHODS ----------
 
-
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
 	if (alertView.tag == 1) {
         if (buttonIndex == 1) {
             
         }
     }
+}
+
+#pragma mark -
+#pragma mark ---------- ComplainTypeViewControllerDelegate DELEGATE METHODS ----------
+
+-(void)selectedDistrct:(NSString *)districtName withCode:(NSString *)districtNameCode{
+    complain.district = districtName;
+    complain.districtCode = districtNameCode;
+    
+    [self.complainsTableView reloadData];
+}
+
+#pragma mark -
+#pragma mark ---------- DistrictViewControllerDelegate DELEGATE METHODS ----------
+
+-(void)selectedComplainType:(NSString *)complainTypeTitle withCode:(NSString *)complainTypeTitleCode
+{
+    complain.complaintype = complainTypeTitle;
+    complain.complainTypeCode = complainTypeTitleCode;
+    
+    [self.complainsTableView reloadData];
 }
 
 #pragma mark -
@@ -328,10 +333,10 @@
     NSString *dateString = [dateFormat stringFromDate:complain.sendDate];
 
     NSString *encodedname = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.name, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
-	NSString *encodedDistrict = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)districtCode, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
+	NSString *encodedDistrict = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.districtCode, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
 	NSString *encodedAddress = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.address, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
 	NSString *encodedMobile = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.mobile, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
-	NSString *encodedComplainCode = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complainTypeCode, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
+	NSString *encodedComplainCode = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.complainTypeCode, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
 	NSString *encodedDate = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)dateString, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
 	NSString *encodedComplainText = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.complainText, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
     
@@ -461,13 +466,16 @@
 #pragma mark ---------- CUSTOM METHODS ----------
 
 -(void)loadInitialvalues{
+    NSLog(@"COMPLAIN ------> %@", complain);
     if (actionMode == COMPLAIN_CREATING) {
         complain = [[NSEntityDescription insertNewObjectForEntityForName:@"Complain" inManagedObjectContext:self.managedObjectContext] retain];
         complain.name = @"";
         complain.district = @"";
+        complain.districtCode = @"";
         complain.address = @"";
         complain.mobile = @"";
         complain.complaintype = @"";
+        complain.complainTypeCode = @"";
         complain.sendDate = [NSDate date];
         complain.latitude = @"85.34";
         complain.longitude = @"22.45";
@@ -475,12 +483,8 @@
         complain.status = STATUS_UNREPORTED;        
     }
     else if (actionMode == COMPLAIN_EDITING) {
-        [SharedStore store].districtName = complain.district;
-        [SharedStore store].complainTypeTitle = complain.complaintype;
     }
     else if (actionMode == COMPLAIN_DISPLAYING) {
-        [SharedStore store].districtName = complain.district;
-        [SharedStore store].complainTypeTitle = complain.complaintype;
         
         complainsTableView.userInteractionEnabled = NO;
         complainTextView.userInteractionEnabled  = NO;
@@ -516,14 +520,16 @@
 }
 
 -(void)showDistrictList{
-    DistrictViewController *districtViewController = [[[DistrictViewController alloc] initWithNibName:@"DistrictViewController" bundle:nil] autorelease];
+    DistrictViewController *districtViewController = [[[DistrictViewController alloc] initWithDistrictCode:complain.district] autorelease];
     districtViewController.title = @"District List";
+    districtViewController.delegate = self;
     [self.navigationController pushViewController:districtViewController animated:YES];
 }
 
 -(void)showComplainTypeList{
-    ComplainTypeViewController *complainTypeViewController = [[[ComplainTypeViewController alloc] initWithNibName:@"ComplainTypeViewController" bundle:nil] autorelease];
+    ComplainTypeViewController *complainTypeViewController = [[[ComplainTypeViewController alloc] initWithComplainTypeCode:complain.complainTypeCode] autorelease];
     complainTypeViewController.title = @"Complain Categories";
+    complainTypeViewController.delegate = self;
     [self.navigationController pushViewController:complainTypeViewController animated:YES];
 }
 
@@ -615,9 +621,7 @@
     [complainsTableView release];
     [complainTextView release];
     [pickerView release];
-    [districtCode release];
-    [complainTypeCode release];
-    [complain release];
+//    [complain release];
     [responseDataSendComplain release];
     [managedObjectContext release];
     [super dealloc];

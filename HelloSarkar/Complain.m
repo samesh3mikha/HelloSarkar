@@ -2,7 +2,7 @@
 //  Complain.m
 //  HelloSarkar
 //
-//  Created by nepal on 30/11/11.
+//  Created by Samesh Swongamika on 12/2/11.
 //  Copyright (c) 2011 __MyCompanyName__. All rights reserved.
 //
 
@@ -10,17 +10,19 @@
 
 
 @implementation Complain
-@dynamic district;
 @dynamic complainText;
-@dynamic longitude;
-@dynamic complaintype;
 @dynamic mobile;
+@dynamic ID;
+@dynamic longitude;
+@dynamic serverID;
+@dynamic latitude;
 @dynamic address;
 @dynamic sendDate;
-@dynamic latitude;
-@dynamic serverID;
-@dynamic ID;
+@dynamic complaintype;
+@dynamic district;
 @dynamic name;
 @dynamic status;
+@dynamic districtCode;
+@dynamic complainTypeCode;
 
 @end

@@ -21,15 +21,7 @@
     UIColor *navigationBarColor;
     
     NSMutableArray *districtArray;
-    NSMutableArray *complainTypeArray;
-    
-    NSString *districtName;
-    NSString *districtCode;
-    NSString *complainTypeTitle;
-    NSString *complainTypeCode;
-    
-    NSInteger districtTableIndex;
-    NSInteger complainTypeTableIndex;
+    NSMutableArray *complainTypeArray;    
 }
 +(SharedStore*)store;
 
@@ -38,14 +30,6 @@
 @property (nonatomic, retain) UIColor *navigationBarColor;
 @property (nonatomic, retain) NSMutableArray *districtArray;
 @property (nonatomic, retain) NSMutableArray *complainTypeArray;
-@property(nonatomic,retain) NSString *districtName;
-@property(nonatomic,retain) NSString *districtCode;
-@property(nonatomic,retain) NSString *complainTypeTitle;
-@property(nonatomic,retain) NSString *complainTypeCode;
-@property(nonatomic, assign) NSInteger districtTableIndex;
-@property(nonatomic, assign) NSInteger complainTypeTableIndex;
-
-
 
 //---------  CUSTOM METHODS ---------
 

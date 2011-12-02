@@ -15,13 +15,6 @@ static SharedStore* _store = nil;
 @synthesize navigationBarColor;
 @synthesize districtArray;
 @synthesize complainTypeArray;
-@synthesize districtName;
-@synthesize districtCode;
-@synthesize complainTypeTitle;
-@synthesize complainTypeCode;
-@synthesize districtTableIndex;
-@synthesize complainTypeTableIndex;
-
 
 +(SharedStore*)store
 {
@@ -55,17 +48,6 @@ static SharedStore* _store = nil;
 		self.backColorForViews = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.75];
 		self.navigationBarColor = [UIColor colorWithRed:0.3 green:0.3 blue:0.3 alpha:0.5];
         self.districtArray = [[NSMutableArray alloc] init];
-        self.complainTypeArray = [[NSMutableArray alloc] init];
-        self.districtName = [[NSString alloc] init];
-        self.districtCode = [[NSString alloc] init];
-        self.complainTypeTitle = [[NSString alloc] init];
-        self.complainTypeCode = [[NSString alloc] init];
-        districtName = @"";
-        districtCode = @"";
-        complainTypeTitle = @"";
-        complainTypeCode = @"";
-        districtTableIndex = -1;
-        complainTypeTableIndex = -1;
     }
     
     return self;
