@@ -173,31 +173,37 @@
         cell.fieldLabel.text = @"Name :";
         cell.textField.placeholder = @"NAME";
         cell.textField.text = self.complain_name;
+        cell.textField.tag = 0;
     }
     else if (indexPath.row == 1) {
         cell.fieldLabel.text = @"District :";
         cell.textField.placeholder = @"DISTRICT";
         cell.textField.text =self.complain_district;
+        cell.textField.tag = 1;
     }
     else if (indexPath.row == 2) {
         cell.fieldLabel.text = @"Address :";
         cell.textField.placeholder = @"ADDRESS";
         cell.textField.text =self.complain_address;
+        cell.textField.tag = 2;
     }
     else if (indexPath.row == 3) {
         cell.fieldLabel.text = @"Mobile :";
         cell.textField.placeholder = @"MOBILE";
         cell.textField.text =self.complain_mobile;
+        cell.textField.tag = 3;
     }
     else if (indexPath.row == 4) {
         cell.fieldLabel.text = @"Complain :";
         cell.textField.placeholder = @"COMPLAIN CATEGORY";
         cell.textField.text = self.complain_complaintype;
+        cell.textField.tag = 4;
     }
     else if (indexPath.row == 5) {
         cell.fieldLabel.text = @"Date :";
         cell.textField.placeholder = @"DATE";
         [self fillDate:cell];
+        cell.textField.tag = 5;
     }
     
     if (indexPath.row == 1 || indexPath.row == 4) {
@@ -258,11 +264,39 @@
 #pragma mark -
 #pragma mark ---------- UITEXTVIEW DELEGATE METHODS ----------
 
+- (BOOL) textViewShouldBeginEditing:(UITextView *)textView
+{
+    if ([complain_complainText isEqualToString:@""]) {
+        complainTextView.text = @"";
+        complainTextView.textColor = [UIColor blackColor];        
+    }
+    return YES;
+}
+
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
     NSLog(@"textViewDidBeginEditing");
     [self saveComplainValues];
     [self relocateScrollViewBounds:textView.tag];
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
+{
+    NSLog(@"shouldChangeTextInRange");
+    self.complain_complainText = complainTextView.text;
+	if ( [ text isEqualToString: @"\n" ] ) {
+		[ textView resignFirstResponder ];
+        if ([textView.text isEqualToString:@""]) 
+        {
+            complainTextView.text = @"Type your complain here(Max 150 letters)";
+            complainTextView.textColor = [UIColor lightGrayColor];
+        }
+        
+        [self resetScrollContent];
+		return NO;
+	}
+
+	return YES;
 }
 
 -(BOOL)textViewShouldReturn:(UITextView *)textView
@@ -516,6 +550,10 @@
     }
     
     complainTextView.text = self.complain_complainText;
+    if ([self.complain_complainText isEqualToString:@""]) {
+        complainTextView.text = @"Type your complain here(Max 150 letters)";
+        complainTextView.textColor = [UIColor lightGrayColor];
+    }
 }
 
 -(void)fillDate:(EditFieldCell *)cell{   
@@ -546,10 +584,10 @@
     scrollView.contentSize = CGSizeMake(320, 645);
     
 	CGRect scrollBounds = scrollView.bounds;
-    if (tag == 0) {
+    if (tag >= 0 && tag <=5) {
         scrollBounds.origin.y = 0;
     }
-    else if(tag == 1){        
+    else if(tag == 6){
         scrollBounds.origin.y = 180;
     }
     [scrollView scrollRectToVisible:scrollBounds animated:YES];
@@ -593,7 +631,7 @@
 -(BOOL)validateData{
     BOOL dataValid = YES;
     
-    if ([self.complain_name isEqualToString:@""] || [self.complain_district isEqualToString:@""] || [self.complain_districtCode isEqualToString:@""] || [self.complain_address isEqualToString:@""] || [self.complain_mobile isEqualToString:@""] || [self.complain_complaintype isEqualToString:@""] || [self.complain_complainTypeCode isEqualToString:@""] || [self.complain_complainText isEqualToString:@""]) {
+    if ([self.complain_name isEqualToString:@""] || [self.complain_district isEqualToString:@""] || [self.complain_districtCode isEqualToString:@""] || [self.complain_address isEqualToString:@""] || [self.complain_mobile isEqualToString:@""] || [self.complain_complaintype isEqualToString:@""] || [self.complain_complainTypeCode isEqualToString:@""] || [self.complain_complainText isEqualToString:@""] || [self.complain_complainText isEqualToString:@"Type your complain here(Max 150 letters)"]) {
         dataValid = NO;
         
         UIAlertView *alert = [[[UIAlertView alloc] init] autorelease];
