@@ -49,7 +49,7 @@
 
     [self prepareComplainTypeList];
 
-    selectedIndex = [complainTypeCodeListArray indexOfObjectIdenticalTo:selectedComplainTypeCode];
+    selectedIndex = [complainTypeCodeListArray indexOfObject:selectedComplainTypeCode];
     NSLog(@"CODE --> %@", selectedComplainTypeCode);
     NSLog(@"SELECTED INDEX --> %d", selectedIndex);
 }
@@ -153,7 +153,7 @@
     [complainTypeListTableView release];
     [complainTypeCodeListArray release];
     [complainTypeListArray release];
-    [selectedComplainTypeCode release];
+//    [selectedComplainTypeCode release];
     [super dealloc];
 }
 @end

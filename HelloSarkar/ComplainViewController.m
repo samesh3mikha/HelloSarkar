@@ -12,7 +12,21 @@
 
 @synthesize scrollView;
 @synthesize complainsTableView;
-@synthesize pickerView;
+@synthesize datePickerView;
+@synthesize complain_ID;
+@synthesize complain_serverID;
+@synthesize complain_name;
+@synthesize complain_district;
+@synthesize complain_districtCode;
+@synthesize complain_address;
+@synthesize complain_mobile;
+@synthesize complain_complaintype;
+@synthesize complain_complainTypeCode;
+@synthesize complain_sendDate;
+@synthesize complain_latitude;
+@synthesize complain_longitude;
+@synthesize complain_complainText;
+@synthesize complain_status;
 @synthesize complainTextView;
 @synthesize connectionSendComplain;
 @synthesize connectionGetDistrictList;
@@ -35,11 +49,23 @@
 -(id)initWithComplain:(Complain *)_complain inMode:(NSInteger)mode{
 	if((self = [super init])){
         // Custom initialization
-        complain = _complain;
-        NSLog(@"INITIALIZING---------");
-        NSLog(@"COMPLAIN ------> %@", complain);
-
         actionMode = mode;
+
+        self.complain_ID = [_complain.ID intValue];
+        self.complain_serverID = _complain.serverID;
+        self.complain_name = _complain.name;
+        self.complain_district = _complain.district;
+        self.complain_districtCode = _complain.districtCode;
+        self.complain_address = _complain.address;
+        self.complain_mobile = _complain.mobile;
+        self.complain_complaintype = _complain.complaintype;
+        self.complain_complainTypeCode = _complain.complainTypeCode;
+        self.complain_sendDate = [_complain.sendDate retain];
+        self.complain_complainText = _complain.complainText;
+        self.complain_latitude = _complain.latitude;
+        self.complain_longitude = _complain.longitude;
+        self.complain_status = _complain.status;
+        
         responseDataSendComplain = [[NSMutableData data] retain];
         responseDataGetDistrictList = [[NSMutableData data] retain];
         responseDataGetComplainTypeList = [[NSMutableData data] retain];
@@ -54,9 +80,9 @@
     self.view.backgroundColor = [SharedStore store].backColorForViews;
     self.complainsTableView.backgroundColor = [UIColor clearColor];
     
-    pickerView = [[UIDatePicker alloc] init];
-    pickerView.datePickerMode = UIDatePickerModeDate;
-    [pickerView setFrame:CGRectMake(0, 85, 320, 216)];
+    datePickerView = [[UIDatePicker alloc] init];
+    datePickerView.datePickerMode = UIDatePickerModeDate;
+    [datePickerView setFrame:CGRectMake(0, 85, 320, 216)];
     
     complainTextView.layer.borderWidth = 1.5f;
 	complainTextView.layer.borderColor = [[UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1] CGColor];
@@ -69,12 +95,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-//    NSLog(@"viewWillAppear-------");
-//    NSLog(@"COMPLAIN ------> %@", complain);
-
     [super viewWillAppear:animated];
-
-    [self resetScrollContent];    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -87,10 +108,15 @@
 #pragma mark ---------- IBACTION METHODS ----------
 
 -(void)sendComplainButtonClicked:(id)sender{
-    complain.complainText = complainTextView.text;
+    [self saveComplainValues];
     
     if ([self validateData]) {
-        [self saveComplainInDB];
+        if (actionMode == COMPLAIN_CREATING) {
+            [self saveComplainInDB];            
+        }
+        else if (actionMode == COMPLAIN_EDITING) {
+            [self updateComplainInDB];
+        }
         [self sendComplainToServer];         
     }
 }
@@ -142,7 +168,38 @@
     cell.selectionStyle = UITableViewCellSelectionStyleGray;
     [cell.textField setFont:[UIFont systemFontOfSize:15]];
     cell.textField.tag = indexPath.row;
-
+    
+    if (indexPath.row == 0) {
+        cell.fieldLabel.text = @"Name :";
+        cell.textField.placeholder = @"NAME";
+        cell.textField.text = self.complain_name;
+    }
+    else if (indexPath.row == 1) {
+        cell.fieldLabel.text = @"District :";
+        cell.textField.placeholder = @"DISTRICT";
+        cell.textField.text =self.complain_district;
+    }
+    else if (indexPath.row == 2) {
+        cell.fieldLabel.text = @"Address :";
+        cell.textField.placeholder = @"ADDRESS";
+        cell.textField.text =self.complain_address;
+    }
+    else if (indexPath.row == 3) {
+        cell.fieldLabel.text = @"Mobile :";
+        cell.textField.placeholder = @"MOBILE";
+        cell.textField.text =self.complain_mobile;
+    }
+    else if (indexPath.row == 4) {
+        cell.fieldLabel.text = @"Complain :";
+        cell.textField.placeholder = @"COMPLAIN CATEGORY";
+        cell.textField.text = self.complain_complaintype;
+    }
+    else if (indexPath.row == 5) {
+        cell.fieldLabel.text = @"Date :";
+        cell.textField.placeholder = @"DATE";
+        [self fillDate:cell];
+    }
+    
     if (indexPath.row == 1 || indexPath.row == 4) {
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
@@ -151,45 +208,13 @@
     }
     else {
         cell.userInteractionEnabled  = YES;
-//        cell.selectionStyle = UITableViewCellSelectionStyleNone;        
-    }
-    
-    if (indexPath.row == 0) {
-        cell.fieldLabel.text = @"Name :";
-        cell.textField.placeholder = @"NAME";
-        cell.textField.text =complain.name;
-    }
-    else if (indexPath.row == 1) {
-        cell.fieldLabel.text = @"District :";
-        cell.textField.placeholder = @"DISTRICT";
-        cell.textField.text =complain.district;
-    }
-    else if (indexPath.row == 2) {
-        cell.fieldLabel.text = @"Address :";
-        cell.textField.placeholder = @"ADDRESS";
-        cell.textField.text =complain.address;
-    }
-    else if (indexPath.row == 3) {
-        cell.fieldLabel.text = @"Mobile :";
-        cell.textField.placeholder = @"MOBILE";
-        cell.textField.text =complain.mobile;
-    }
-    else if (indexPath.row == 4) {
-        cell.fieldLabel.text = @"Complain :";
-        cell.textField.placeholder = @"COMPLAIN CATEGORY";
-        cell.textField.text = complain.complaintype;
-    }
-    else if (indexPath.row == 5) {
-        cell.fieldLabel.text = @"Date :";
-        cell.textField.placeholder = @"DATE";
-        [self fillDate:cell];
     }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    EditFieldCell *cell = (EditFieldCell *)[self.complainsTableView cellForRowAtIndexPath:indexPath];
     
+    EditFieldCell *cell = (EditFieldCell *)[self.complainsTableView cellForRowAtIndexPath:indexPath];    
     if (indexPath.row == 1) {
         [self showDistrictList];
     }
@@ -203,52 +228,45 @@
         [cell assignAsFirstResponder];
     }
 
+    // MAY BE WRONG IMPLEMENTATION BUT NECESSARY WORK AROUND
+    [self saveComplainInDB];
 }
 
 #pragma mark -
 #pragma mark ---------- EDITFIELDCELL DELEGATE METHODS ----------
 
-- (void)relocateScrollView:(CGRect)cellFrame{
+- (void)textFieldSelected
+{
     [self relocateScrollViewBounds:0];
 }
 
--(void)resignResponder:(NSInteger)tag withText:(NSString *)text{
+-(void)textFieldResinged:(NSInteger)tag withText:(NSString *)text
+{
     [self resetScrollContent];
     
     if (tag == 0) {
-        complain.name = text;
+        self.complain_name = text;
     }
     else if (tag == 2) {
-        complain.address = text;        
+        self.complain_address = text;        
     }
     else if (tag == 3) {
-        complain.mobile = text;        
+        self.complain_mobile = text;        
     }
-}
-
-#pragma mark -
-#pragma mark ---------- UITEXTFIELD DELEGATE METHODS ----------
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    [self relocateScrollViewBounds:textField.tag];
-}
-    
--(BOOL)textFieldShouldReturn:(UITextField *)textField {	
-    NSLog(@"textFieldShouldReturn");
-    [textField resignFirstResponder];
-
-    
-    return YES;
 }
 
 #pragma mark -
 #pragma mark ---------- UITEXTVIEW DELEGATE METHODS ----------
 
-- (void)textViewDidBeginEditing:(UITextView *)textView {
+- (void)textViewDidBeginEditing:(UITextView *)textView
+{
+    NSLog(@"textViewDidBeginEditing");
+    [self saveComplainValues];
     [self relocateScrollViewBounds:textView.tag];
 }
 
-
--(BOOL)textViewShouldReturn:(UITextView *)textView {	
+-(BOOL)textViewShouldReturn:(UITextView *)textView
+{
     NSLog(@"textViewShouldReturn");
     [textView resignFirstResponder];
     [self resetScrollContent];    
@@ -264,7 +282,7 @@
     NSLog(@"ACTIONS HHET");
 	if (buttonIndex == 0)
 	{	
-        complain.sendDate = [pickerView date];    
+        self.complain_sendDate = [datePickerView date];    
         
         [self.complainsTableView reloadData];
     }
@@ -273,31 +291,34 @@
 #pragma mark -
 #pragma mark ---------- UIALERTVIEW DELEGATE METHODS ----------
 
--(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-	if (alertView.tag == 1) {
-        if (buttonIndex == 1) {
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+	if (alertView.tag == 1)
+    {
+        if (buttonIndex == 1)
+        {
             
         }
     }
 }
 
 #pragma mark -
-#pragma mark ---------- ComplainTypeViewControllerDelegate DELEGATE METHODS ----------
+#pragma mark ---------- DistrictViewControllerDelegate DELEGATE METHODS ----------
 
 -(void)selectedDistrct:(NSString *)districtName withCode:(NSString *)districtNameCode{
-    complain.district = districtName;
-    complain.districtCode = districtNameCode;
+    self.complain_district = districtName;
+    self.complain_districtCode = districtNameCode;
     
     [self.complainsTableView reloadData];
 }
 
 #pragma mark -
-#pragma mark ---------- DistrictViewControllerDelegate DELEGATE METHODS ----------
+#pragma mark ---------- ComplainTypeViewControllerDelegate DELEGATE METHODS ----------
 
 -(void)selectedComplainType:(NSString *)complainTypeTitle withCode:(NSString *)complainTypeTitleCode
 {
-    complain.complaintype = complainTypeTitle;
-    complain.complainTypeCode = complainTypeTitleCode;
+    self.complain_complaintype = complainTypeTitle;
+    self.complain_complainTypeCode = complainTypeTitleCode;
     
     [self.complainsTableView reloadData];
 }
@@ -330,15 +351,15 @@
 -(void)sendComplainToServer{
     NSDateFormatter *dateFormat = [[[NSDateFormatter alloc] init] autorelease];
     [dateFormat setDateFormat:@"yyyy/MM/dd"];
-    NSString *dateString = [dateFormat stringFromDate:complain.sendDate];
+    NSString *dateString = [dateFormat stringFromDate:self.complain_sendDate];
 
-    NSString *encodedname = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.name, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
-	NSString *encodedDistrict = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.districtCode, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
-	NSString *encodedAddress = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.address, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
-	NSString *encodedMobile = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.mobile, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
-	NSString *encodedComplainCode = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.complainTypeCode, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
+    NSString *encodedname = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.complain_name, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
+	NSString *encodedDistrict = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.complain_districtCode, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
+	NSString *encodedAddress = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.complain_address, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
+	NSString *encodedMobile = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.complain_mobile, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
+	NSString *encodedComplainCode = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.complain_complainTypeCode, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
 	NSString *encodedDate = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)dateString, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
-	NSString *encodedComplainText = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)complain.complainText, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
+	NSString *encodedComplainText = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.complain_complainText, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
     
 	NSString *content = [NSString stringWithFormat: @"name=%@&district_id=%@&address=%@&mobile=%@&complain_type=%@&complain_text=%@&mobile_info=%@&gps=&date=%@", encodedname, encodedDistrict, encodedAddress, encodedMobile, encodedComplainCode, encodedComplainText, @"Iphone", encodedDate];
 	[encodedname release];
@@ -346,6 +367,7 @@
 	[encodedAddress release];
 	[encodedMobile release];
 	[encodedComplainCode release];
+    [encodedDate release];
 	[encodedComplainText release];
 	
     NSLog(@"PAARAMS -> %@", content);    
@@ -413,16 +435,19 @@
         
         NSLog(@"responseStringSendComplain STRING -->%@", responseStringSendComplain);
         if (responseStringSendComplain.length == 6) {
-            complain.serverID = responseStringSendComplain;
-            complain.status = STATUS_REPORTED;
-            [self updateDB];
+            self.complain_serverID = responseStringSendComplain;
+            self.complain_status = STATUS_REPORTED;
+            
+            [self updateComplainInDB];
         }
         else {
-            
+            [self showResendAlerView]; 
         }
         self.connectionSendComplain = nil;        
 
-        [complain release];
+        if (actionMode == COMPLAIN_EDITING) {
+            actionMode = COMPLAIN_DISPLAYING;
+        }
         [self loadInitialvalues];
         [self.complainsTableView reloadData];        
     }
@@ -466,21 +491,20 @@
 #pragma mark ---------- CUSTOM METHODS ----------
 
 -(void)loadInitialvalues{
-    NSLog(@"COMPLAIN ------> %@", complain);
-    if (actionMode == COMPLAIN_CREATING) {
-        complain = [[NSEntityDescription insertNewObjectForEntityForName:@"Complain" inManagedObjectContext:self.managedObjectContext] retain];
-        complain.name = @"";
-        complain.district = @"";
-        complain.districtCode = @"";
-        complain.address = @"";
-        complain.mobile = @"";
-        complain.complaintype = @"";
-        complain.complainTypeCode = @"";
-        complain.sendDate = [NSDate date];
-        complain.latitude = @"85.34";
-        complain.longitude = @"22.45";
-        complain.complainText = @"";
-        complain.status = STATUS_UNREPORTED;        
+    if (actionMode == COMPLAIN_CREATING) 
+    {
+        self.complain_name = @"";
+        self.complain_district = @"";
+        self.complain_districtCode = @"";
+        self.complain_address = @"";
+        self.complain_mobile = @"";
+        self.complain_complaintype = @"";
+        self.complain_complainTypeCode = @"";
+        self.complain_sendDate = [NSDate date];
+        self.complain_latitude = @"85.34";
+        self.complain_longitude = @"22.45";
+        self.complain_complainText = @"";
+        self.complain_status = STATUS_UNREPORTED;        
     }
     else if (actionMode == COMPLAIN_EDITING) {
     }
@@ -491,15 +515,27 @@
         reportBUtton.userInteractionEnabled = NO;
     }
     
-    complainTextView.text = complain.complainText;
+    complainTextView.text = self.complain_complainText;
 }
 
 -(void)fillDate:(EditFieldCell *)cell{   
     NSDateFormatter *dateFormat = [[[NSDateFormatter alloc] init] autorelease];
     [dateFormat setDateFormat:@"MMMM-dd-yyyy"];
-    NSString *dateString = [dateFormat stringFromDate:complain.sendDate];
+    NSLog(@"DATE --> %@", self.complain_sendDate);
+    NSString *dateString = [dateFormat stringFromDate:self.complain_sendDate];
     
     cell.textField.text = dateString;
+}
+
+-(void)saveComplainValues{
+    EditFieldCell *cellForName = (EditFieldCell *)[self.complainsTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    EditFieldCell *cellForAddress = (EditFieldCell *)[self.complainsTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:0]];
+    EditFieldCell *cellForMobile = (EditFieldCell *)[self.complainsTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:3 inSection:0]];
+    
+    self.complain_name = cellForName.textField.text;
+    self.complain_address = cellForAddress.textField.text;
+    self.complain_mobile = cellForMobile.textField.text;
+    self.complain_complainText = complainTextView.text;
 }
 
 -(void)resetScrollContent{
@@ -520,14 +556,14 @@
 }
 
 -(void)showDistrictList{
-    DistrictViewController *districtViewController = [[[DistrictViewController alloc] initWithDistrictCode:complain.district] autorelease];
+    DistrictViewController *districtViewController = [[[DistrictViewController alloc] initWithDistrictCode:self.complain_districtCode] autorelease];
     districtViewController.title = @"District List";
     districtViewController.delegate = self;
     [self.navigationController pushViewController:districtViewController animated:YES];
 }
 
 -(void)showComplainTypeList{
-    ComplainTypeViewController *complainTypeViewController = [[[ComplainTypeViewController alloc] initWithComplainTypeCode:complain.complainTypeCode] autorelease];
+    ComplainTypeViewController *complainTypeViewController = [[[ComplainTypeViewController alloc] initWithComplainTypeCode:self.complain_complainTypeCode] autorelease];
     complainTypeViewController.title = @"Complain Categories";
     complainTypeViewController.delegate = self;
     [self.navigationController pushViewController:complainTypeViewController animated:YES];
@@ -537,7 +573,8 @@
     UIActionSheet *menu = [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Done" destructiveButtonTitle:nil otherButtonTitles:nil] autorelease];
     
     // Add the picker
-    [menu addSubview:pickerView];
+    [datePickerView setDate:self.complain_sendDate];
+    [menu addSubview:datePickerView];
     [menu showInView:self.navigationController.tabBarController.view];        
     [menu setBounds:CGRectMake(0,0,320, 516)];
 }
@@ -556,7 +593,7 @@
 -(BOOL)validateData{
     BOOL dataValid = YES;
     
-    if ([complain.name isEqualToString:@""] || [complain.district isEqualToString:@""] || [complain.address isEqualToString:@""] || [complain.mobile isEqualToString:@""] || [complain.complaintype isEqualToString:@""] || [complain.complainText isEqualToString:@""]) {
+    if ([self.complain_name isEqualToString:@""] || [self.complain_district isEqualToString:@""] || [self.complain_districtCode isEqualToString:@""] || [self.complain_address isEqualToString:@""] || [self.complain_mobile isEqualToString:@""] || [self.complain_complaintype isEqualToString:@""] || [self.complain_complainTypeCode isEqualToString:@""] || [self.complain_complainText isEqualToString:@""]) {
         dataValid = NO;
         
         UIAlertView *alert = [[[UIAlertView alloc] init] autorelease];
@@ -570,25 +607,77 @@
     return dataValid;
 }
 
--(void)saveComplainInDB{
-    // CHECK IF ATIST IS ALREADY CREATED
+-(void)saveComplainInDB
+{
+    Complain *complain;
     NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Complain" inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
     NSError *error = nil;
     NSArray *complains = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
     
-    complain.ID = [NSNumber numberWithInt:complains.count];
-    complain.complainText = complainTextView.text;
+    complain = [NSEntityDescription insertNewObjectForEntityForName:@"Complain" inManagedObjectContext:self.managedObjectContext];
+    self.complain_ID = complains.count + 1;
+
+    complain.ID = [NSNumber numberWithInt:self.complain_ID];
+    complain.name = self.complain_name;
+    complain.district = self.complain_district;
+    complain.districtCode = self.complain_districtCode;
+    complain.address = self.complain_address;
+    complain.mobile = self.complain_mobile;
+    complain.complaintype = self.complain_complaintype;
+    complain.complainTypeCode = self.complain_complainTypeCode;
+    complain.sendDate = self.complain_sendDate;
+    complain.latitude = self.complain_latitude;
+    complain.longitude = self.complain_latitude;
+    complain.complainText = self.complain_complainText;
+    complain.status = self.complain_status;    
+    complain.complainText = self.complain_complainText;
+    complain.serverID = self.complain_serverID;
+    complain.status = self.complain_status;
     
     [self updateDB];
     
     NSLog(@"COMPLAIN ------> %@", complain);
 }
 
--(void)deleteComplainFromDB{
-    [self.managedObjectContext deleteObject:complain];	
+-(void)updateComplainInDB;{
+    Complain *complain;
+    NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Complain" inManagedObjectContext:self.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ID = %d", self.complain_ID];
+    [fetchRequest setPredicate:predicate];
+    NSError *error = nil;
+    
+    NSArray *complains = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    if (complains.count > 0) {
+        complain = [complains objectAtIndex:0];
+    }
+    complain.name = self.complain_name;
+    complain.district = self.complain_district;
+    complain.districtCode = self.complain_districtCode;
+    complain.address = self.complain_address;
+    complain.mobile = self.complain_mobile;
+    complain.complaintype = self.complain_complaintype;
+    complain.complainTypeCode = self.complain_complainTypeCode;
+    complain.sendDate = self.complain_sendDate;
+    complain.latitude = self.complain_latitude;
+    complain.longitude = self.complain_latitude;
+    complain.complainText = self.complain_complainText;
+    complain.status = self.complain_status;    
+    complain.complainText = self.complain_complainText;
+    complain.serverID = self.complain_serverID;
+    complain.status = self.complain_status;
+
     [self updateDB];
+    
+    NSLog(@"COMPLAIN ------> %@", complain);
+}
+
+-(void)deleteComplainFromDB{
+//    [self.managedObjectContext deleteObject:complain];	
+//    [self updateDB];
 }
 
 -(void)updateDB{
@@ -620,8 +709,20 @@
     [scrollView release];
     [complainsTableView release];
     [complainTextView release];
-    [pickerView release];
-//    [complain release];
+    [datePickerView release];
+//    [complain_serverID release];
+//    [complain_name release];
+//    [complain_district release];
+//    [complain_districtCode release];
+//    [complain_address release];
+//    [complain_mobile release];
+//    [complain_complaintype release];
+//    [complain_complainTypeCode release];
+//    [complain_sendDate release];
+//    [complain_latitude release];
+//    [complain_longitude release];
+//    [complain_complainText release];
+//    [complain_status release];
     [responseDataSendComplain release];
     [managedObjectContext release];
     [super dealloc];

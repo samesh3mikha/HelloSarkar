@@ -14,8 +14,8 @@
 
 @protocol EditFieldCellDelegate <NSObject>
 // we will make one function mandatory to include
--(void)relocateScrollView:(CGRect)cellFrame;
--(void)resignResponder:(NSInteger)tag withText:(NSString *)text;
+-(void)textFieldSelected;
+-(void)textFieldResinged:(NSInteger)tag withText:(NSString *)text;
 
 @optional  
 // and the other one is optional (this function has not been used in this tutorial)  

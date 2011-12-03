@@ -49,7 +49,7 @@
 
     [self prepareDistrictList];
     
-    selectedIndex = [districtCodeListArray indexOfObjectIdenticalTo:selectedDistrictCode];
+    selectedIndex = [districtCodeListArray indexOfObject:selectedDistrictCode];
     NSLog(@"CODE --> %@", selectedDistrictCode);
     NSLog(@"SELECTED INDEX --> %d", selectedIndex);
 
@@ -151,7 +151,7 @@
     [districtListTableView release];
     [districtCodeListArray release];
     [districtListArray release];
-    [selectedDistrictCode release];
+//    [selectedDistrictCode release];
     
     [super dealloc];
 }

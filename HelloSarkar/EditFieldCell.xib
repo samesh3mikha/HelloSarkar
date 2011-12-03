@@ -271,6 +271,7 @@
 							<string>complainTextView</string>
 							<string>complainsTableView</string>
 							<string>pickerView</string>
+							<string>reportBUtton</string>
 							<string>scrollView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -278,6 +279,7 @@
 							<string>UITextView</string>
 							<string>UITableView</string>
 							<string>UIDatePicker</string>
+							<string>UIButton</string>
 							<string>UIScrollView</string>
 						</object>
 					</object>
@@ -288,6 +290,7 @@
 							<string>complainTextView</string>
 							<string>complainsTableView</string>
 							<string>pickerView</string>
+							<string>reportBUtton</string>
 							<string>scrollView</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -303,6 +306,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">pickerView</string>
 								<string key="candidateClassName">UIDatePicker</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">reportBUtton</string>
+								<string key="candidateClassName">UIButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">scrollView</string>

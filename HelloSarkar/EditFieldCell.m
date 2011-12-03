@@ -34,16 +34,15 @@
 #pragma mark ---------- UITEXTFIELD DELEGATE METHODS ----------
 
 - (void)textFieldDidBeginEditing:(UITextField *)tf {
-	[delegate relocateScrollView:self.frame];
+	[delegate textFieldSelected];
 }
-
-
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {		
     self.textField.userInteractionEnabled = NO;
 	[self.textField resignFirstResponder];
-	[delegate resignResponder:self.textField.tag withText:self.textField.text];
-	return YES;
+	[delegate textFieldResinged:self.textField.tag withText:self.textField.text];
+	
+    return NO;
 }
 
 
