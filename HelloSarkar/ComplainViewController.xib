@@ -123,7 +123,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAACAgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 							<object class="IBUIButton" id="403766732">
 								<reference key="NSNextResponder" ref="36939691"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{121, 328}, {92, 37}}</string>
+								<string key="NSFrame">{{89, 328}, {143, 37}}</string>
 								<reference key="NSSuperview" ref="36939691"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView"/>
@@ -325,9 +325,9 @@ AAMAAAABAAEAAAFTAAMAAAAEAAACAgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 						<reference key="object" ref="36939691"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="403766732"/>
 							<reference ref="92623462"/>
 							<reference ref="40419547"/>
+							<reference ref="403766732"/>
 						</object>
 						<reference key="parent" ref="191373211"/>
 						<string key="objectName">Scroll View</string>

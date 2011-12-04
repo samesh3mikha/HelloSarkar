@@ -75,6 +75,7 @@
 
 //---------  URLCONNECTION METHODS --------- 
 -(void)sendComplainToServer;
+-(void)checkComplainStatus;
 
 //---------  CUSTOM METHODS ---------
 -(void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;

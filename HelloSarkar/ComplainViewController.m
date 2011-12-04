@@ -103,13 +103,18 @@
     [self saveComplainValues];
     
     if ([self validateData]) {
-        if (actionMode == COMPLAIN_CREATING) {
-            [self saveComplainInDB];            
+        if (actionMode == COMPLAIN_CREATING || actionMode == COMPLAIN_EDITING) {
+            if (actionMode == COMPLAIN_CREATING) {
+                [self saveComplainInDB];            
+            }
+            else if (actionMode == COMPLAIN_EDITING) {
+                [self updateComplainInDB];
+            }
+            [self sendComplainToServer];                     
         }
-        else if (actionMode == COMPLAIN_EDITING) {
-            [self updateComplainInDB];
+        else if (actionMode == COMPLAIN_REPORTED){
+            [self checkComplainStatus];
         }
-        [self sendComplainToServer];         
     }
 }
 
@@ -385,6 +390,9 @@
 	if (connectionSendComplain) {
 		[UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
 	}
+}
+
+-(void)checkComplainStatus{
     
 }
 
@@ -432,7 +440,7 @@
         self.connectionSendComplain = nil;        
 
         if (actionMode == COMPLAIN_EDITING) {
-            actionMode = COMPLAIN_DISPLAYING;
+            actionMode = COMPLAIN_REPORTED;
         }
         [self loadInitialvalues];
         [self.complainsTableView reloadData];        
@@ -460,13 +468,21 @@
         self.complain_status = STATUS_UNREPORTED;        
     }
     else if (actionMode == COMPLAIN_EDITING) {
+        [reportBUtton setTitle:@"Report" forState:UIControlStateNormal];
     }
-    else if (actionMode == COMPLAIN_DISPLAYING) {
-        
+    else if (actionMode == COMPLAIN_REPORTED) {
         complainsTableView.userInteractionEnabled = NO;
         complainTextView.userInteractionEnabled  = NO;
-        reportBUtton.userInteractionEnabled = NO;
+
+        [reportBUtton setTitle:@"Check Status" forState:UIControlStateNormal];
     }
+    else if (actionMode == COMPLAIN_REPORTED) {
+        complainsTableView.userInteractionEnabled = NO;
+        complainTextView.userInteractionEnabled  = NO;
+
+        reportBUtton.userInteractionEnabled = NO;
+        [reportBUtton setTitle:STATUS_RESOLVED forState:UIControlStateNormal];
+    }    
     
     complainTextView.text = self.complain_complainText;
     if ([self.complain_complainText isEqualToString:@""]) {

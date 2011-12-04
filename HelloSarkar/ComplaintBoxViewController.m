@@ -93,7 +93,7 @@
     }
     else if (tableSegmentedControl.selectedSegmentIndex == 1) {
     // REPORTED
-        mode = COMPLAIN_DISPLAYING;        
+        mode = COMPLAIN_REPORTED;        
     }
     NSLog(@"CELL OBJECT ------------------------");
     NSLog(@"COMPLAIN ------> %@", complain);

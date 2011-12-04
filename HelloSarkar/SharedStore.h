@@ -9,12 +9,14 @@
 #import <Foundation/Foundation.h>
 
 #define SERVER_STRING @"http://apps.mobilenepal.net"
+#define STATUS_UNREPORTED @"unreported"
 #define STATUS_REPORTED @"reported" 
-#define STATUS_UNREPORTED @"unreported" 
+#define STATUS_RESOLVED @"problem resolved" 
 
 #define COMPLAIN_CREATING 0
 #define COMPLAIN_EDITING 1
-#define COMPLAIN_DISPLAYING 2
+#define COMPLAIN_REPORTED 2
+#define COMPLAIN_RESOLVED 3
 
 @interface SharedStore : NSObject{
 	UIColor *backColorForViews;

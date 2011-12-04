@@ -189,12 +189,12 @@
 		017497491480CBFF008C1A94 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				46396A8514876A4900413F05 /* EditFieldCell.h */,
-				46396A8614876A4900413F05 /* EditFieldCell.m */,
 				0174977F148126ED008C1A94 /* SharedStore.h */,
 				01749780148126ED008C1A94 /* SharedStore.m */,
 				0174976B1480F22E008C1A94 /* XMLReader.h */,
 				0174976C1480F22E008C1A94 /* XMLReader.m */,
+				46396A8514876A4900413F05 /* EditFieldCell.h */,
+				46396A8614876A4900413F05 /* EditFieldCell.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
