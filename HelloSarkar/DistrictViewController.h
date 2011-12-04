@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "SharedStore.h"
+#import "XMLReader.h"
+
 
 @class DistrictViewController;  
 
@@ -24,6 +26,9 @@
     NSInteger selectedIndex;
     NSString *selectedDistrictCode;
     
+    NSURLConnection *connectionGetDistrictList;
+	NSMutableData *responseDataGetDistrictList;
+
     id <DistrictViewControllerDelegate> delegate;
 }
 
@@ -33,13 +38,18 @@
 @property (nonatomic, retain) NSMutableArray *districtListArray;
 @property (nonatomic, assign) NSInteger selectedIndex;
 @property (nonatomic, retain) NSString *selectedDistrictCode;
+@property(nonatomic,retain) NSURLConnection *connectionGetDistrictList;
 @property (nonatomic, assign) id <DistrictViewControllerDelegate> delegate;
 
 //---------  SELF METHODS ---------
 -(id)initWithDistrictCode:(NSString *)_distrcitCode;
 
+//---------  URLCONNECTION METHODS --------- 
+-(void)getDistrictListFromServer;
+
 //---------  CUSTOM METHODS ---------
 -(void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 -(void)prepareDistrictList;
+-(void)showListNotFoundAlertView;
 
 @end

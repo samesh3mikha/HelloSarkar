@@ -29,8 +29,6 @@
 @synthesize complain_status;
 @synthesize complainTextView;
 @synthesize connectionSendComplain;
-@synthesize connectionGetDistrictList;
-@synthesize connectionGetComplainTypeList;
 @synthesize managedObjectContext;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -39,9 +37,7 @@
     if (self) {
         // Custom initialization
         actionMode = COMPLAIN_CREATING;
-        responseDataSendComplain = [[NSMutableData data] retain];
-        responseDataGetDistrictList = [[NSMutableData data] retain];
-        responseDataGetComplainTypeList = [[NSMutableData data] retain];
+        responseDataSendComplain = [[NSMutableData data] retain];        
     }
     return self;
 }
@@ -67,8 +63,6 @@
         self.complain_status = _complain.status;
         
         responseDataSendComplain = [[NSMutableData data] retain];
-        responseDataGetDistrictList = [[NSMutableData data] retain];
-        responseDataGetComplainTypeList = [[NSMutableData data] retain];
 	}
 	return self;
 }
@@ -90,8 +84,6 @@
 	[complainTextView.layer setCornerRadius:10.0];
     
     [self loadInitialvalues];
-    
-    //[self getDistrictListFromServer];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -360,28 +352,6 @@
 #pragma mark -
 #pragma mark ---------- URLCONNECTION METHODS ----------
 
--(void)getDistrictListFromServer{
-    NSString *connectionString = [NSString stringWithFormat:@"%@/hellosarkar/data/districts.xml", SERVER_STRING];
-	NSURL* url = [NSURL URLWithString:connectionString];
-	NSMutableURLRequest *urlRequest = [[[NSMutableURLRequest alloc] initWithURL:url] autorelease];
-	[urlRequest setHTTPMethod:@"GET"];
-	connectionGetDistrictList = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
-	if (connectionGetDistrictList) {
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-	}	
-}
-
--(void)getComplainTypeFromServer{
-    NSString *connectionString = [NSString stringWithFormat:@"%@/hellosarkar/data/categories.xml", SERVER_STRING];
-	NSURL* url = [NSURL URLWithString:connectionString];
-	NSMutableURLRequest *urlRequest = [[[NSMutableURLRequest alloc] initWithURL:url] autorelease];
-	[urlRequest setHTTPMethod:@"GET"];
-	connectionGetComplainTypeList = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];
-	if (connectionGetComplainTypeList) {
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-	}	   
-}
-
 -(void)sendComplainToServer{
     NSDateFormatter *dateFormat = [[[NSDateFormatter alloc] init] autorelease];
     [dateFormat setDateFormat:@"yyyy/MM/dd"];
@@ -425,23 +395,11 @@
     if (connection == connectionSendComplain) {
         [responseDataSendComplain setLength:0];        
     }
-    else if (connection == connectionGetDistrictList){
-        [responseDataGetDistrictList setLength:0];
-    }
-    else if (connection == connectionGetComplainTypeList){
-        [responseDataGetComplainTypeList setLength:0];
-    }
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
     if (connection == connectionSendComplain) {
         [responseDataSendComplain appendData:data];        
-    }
-    else if (connection == connectionGetDistrictList){
-        [responseDataGetDistrictList appendData:data];                
-    }
-    else if (connection == connectionGetComplainTypeList){
-        [responseDataGetComplainTypeList appendData:data];
     }
 }
 
@@ -450,12 +408,6 @@
         self.connectionSendComplain = nil;     
         
         [self showResendAlerView];
-    }
-    else if (connection == connectionGetDistrictList){
-        self.connectionGetDistrictList = nil;
-    }
-    else if (connection == connectionGetComplainTypeList){
-        self.connectionGetComplainTypeList = nil;
     }
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 	NSLog(@"connection didFailWithError ------------");
@@ -484,40 +436,7 @@
         }
         [self loadInitialvalues];
         [self.complainsTableView reloadData];        
-    }
-    else if (connection == connectionGetDistrictList){
-        NSString *responseStringGetDistrictList = [[[NSString alloc] initWithData:responseDataGetDistrictList encoding:NSUTF8StringEncoding] autorelease];
-        
-        NSDictionary *responseDictionary = [[NSDictionary alloc] init];
-        NSError *error;
-        responseDictionary = [XMLReader dictionaryForXMLString:responseStringGetDistrictList error:&error];
-        
-        [SharedStore store].districtArray = (NSMutableArray *)[[responseDictionary valueForKey:@"districts"] valueForKey:@"district"];
-        
-        [[NSUserDefaults standardUserDefaults] setObject:[SharedStore store].districtArray forKey:@"districtArray"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        
-        self.connectionGetDistrictList = nil;
-        
-//        NSLog(@"responseStringSendComplain STRING -->%@", responseStringGetDistrictList);
-        [self getComplainTypeFromServer];
-    }    
-    else if (connection == connectionGetComplainTypeList){
-        NSString *responseStringGetComplainTypeList = [[[NSString alloc] initWithData:responseDataGetComplainTypeList encoding:NSUTF8StringEncoding] autorelease];
-        
-        NSDictionary *responseDictionary = [[NSDictionary alloc] init];
-        NSError *error;
-        responseDictionary = [XMLReader dictionaryForXMLString:responseStringGetComplainTypeList error:&error];
-
-        [SharedStore store].complainTypeArray = (NSMutableArray *)[[responseDictionary valueForKey:@"categories"] valueForKey:@"category"];
-        
-        [[NSUserDefaults standardUserDefaults] setObject:[SharedStore store].complainTypeArray forKey:@"complainTypeArray"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-
-        self.connectionGetComplainTypeList = nil;
-
-//        NSLog(@"responseStringSendComplain STRING -->%@", responseStringGetComplainTypeList);
-    }
+    }   
 }
 
 

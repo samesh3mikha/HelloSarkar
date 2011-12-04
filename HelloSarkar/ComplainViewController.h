@@ -39,8 +39,8 @@
     NSString *complain_complainText;
     NSString *complain_status; 
     
-    NSURLConnection *connectionSendComplain, *connectionGetDistrictList, *connectionGetComplainTypeList;
-	NSMutableData *responseDataSendComplain, *responseDataGetDistrictList, *responseDataGetComplainTypeList;
+    NSURLConnection *connectionSendComplain;
+	NSMutableData *responseDataSendComplain;
 
     NSManagedObjectContext *managedObjectContext;
 }
@@ -65,8 +65,6 @@
 @property(nonatomic,retain) NSString *complain_complainText;
 @property(nonatomic,retain) NSString *complain_status;
 @property(nonatomic,retain) NSURLConnection *connectionSendComplain;
-@property(nonatomic,retain) NSURLConnection *connectionGetDistrictList;
-@property(nonatomic,retain) NSURLConnection *connectionGetComplainTypeList;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
 //---------  SELF METHODS ---------
@@ -76,8 +74,6 @@
 -(IBAction)sendComplainButtonClicked:(id)sender;
 
 //---------  URLCONNECTION METHODS --------- 
--(void)getDistrictListFromServer;
--(void)getComplainTypeFromServer;
 -(void)sendComplainToServer;
 
 //---------  CUSTOM METHODS ---------

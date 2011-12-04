@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "SharedStore.h"
+#import "XMLReader.h"
 
 @class ComplainTypeViewController;  
 
@@ -24,6 +25,9 @@
     NSInteger selectedIndex;
     NSString *selectedComplainTypeCode;
 
+    NSURLConnection *connectionGetComplainTypeList;
+	NSMutableData *responseDataGetComplainTypeList;
+
     id <ComplainTypeViewControllerDelegate> delegate;
 }
 //---------  PROPERTIES --------- 
@@ -32,13 +36,18 @@
 @property (nonatomic, retain) NSMutableArray *complainTypeListArray;
 @property (nonatomic, assign) NSInteger selectedIndex;
 @property (nonatomic, retain) NSString *selectedComplainTypeCode;
+@property(nonatomic,retain) NSURLConnection *connectionGetComplainTypeList;
 @property (nonatomic, assign) id <ComplainTypeViewControllerDelegate> delegate;
 
 //---------  SELF METHODS ---------
 -(id)initWithComplainTypeCode:(NSString *)_complainTypeCode;
 
+//---------  URLCONNECTION METHODS --------- 
+-(void)getComplainTypeFromServer;
+
 //---------  CUSTOM METHODS ---------
 -(void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 -(void)prepareComplainTypeList;
+-(void)showListNotFoundAlertView;
 
 @end
