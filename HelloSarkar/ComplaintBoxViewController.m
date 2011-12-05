@@ -92,8 +92,14 @@
         mode = COMPLAIN_EDITING;
     }
     else if (tableSegmentedControl.selectedSegmentIndex == 1) {
-    // REPORTED
-        mode = COMPLAIN_REPORTED;        
+        if ([complain.status isEqualToString:STATUS_REPORTED]) {
+            // REPORTED
+            mode = COMPLAIN_REPORTED;                    
+        }
+        else if ([complain.status isEqualToString:STATUS_RESOLVED]) {
+            // RESOLVED
+            mode = COMPLAIN_RESOLVED;            
+        }
     }
     NSLog(@"CELL OBJECT ------------------------");
     NSLog(@"COMPLAIN ------> %@", complain);

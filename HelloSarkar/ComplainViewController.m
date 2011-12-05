@@ -28,7 +28,7 @@
 @synthesize complain_complainText;
 @synthesize complain_status;
 @synthesize complainTextView;
-@synthesize connectionSendComplain;
+@synthesize connectionSendComplain, connectionCheckComplainStatus;
 @synthesize managedObjectContext;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -37,7 +37,8 @@
     if (self) {
         // Custom initialization
         actionMode = COMPLAIN_CREATING;
-        responseDataSendComplain = [[NSMutableData data] retain];        
+        responseDataSendComplain = [[NSMutableData data] retain];
+        responseDataCheckComplainStatus = [[NSMutableData data] retain];
     }
     return self;
 }
@@ -63,6 +64,7 @@
         self.complain_status = _complain.status;
         
         responseDataSendComplain = [[NSMutableData data] retain];
+        responseDataCheckComplainStatus = [[NSMutableData data] retain];
 	}
 	return self;
 }
@@ -113,6 +115,7 @@
             [self sendComplainToServer];                     
         }
         else if (actionMode == COMPLAIN_REPORTED){
+            NSLog(@"COMPLAIN_REPORTED ------------------");
             [self checkComplainStatus];
         }
     }
@@ -401,7 +404,20 @@
 }
 
 -(void)checkComplainStatus{
+      NSString *encodedServerID = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)self.complain_serverID, NULL, (CFStringRef)@"!*'();:@&=+$,/?%#[]",kCFStringEncodingUTF8);
     
+    NSString *content = [NSString stringWithFormat:@"response_code=%@", encodedServerID];
+    [encodedServerID release];
+    
+    NSString *connectionString = [NSString stringWithFormat:@"%@/hellosarkar/public/complain/getStatus", SERVER_STRING];
+	NSURL* url = [NSURL URLWithString:connectionString];
+	NSMutableURLRequest *urlRequest = [[[NSMutableURLRequest alloc] initWithURL:url] autorelease];
+	[urlRequest setHTTPMethod:@"POST"];
+	[urlRequest setHTTPBody:[content dataUsingEncoding:NSUTF8StringEncoding]];
+	self.connectionCheckComplainStatus = [[[NSURLConnection alloc] initWithRequest:urlRequest delegate:self] autorelease];
+	if (connectionCheckComplainStatus) {
+		[UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+	}
 }
 
 #pragma mark -
@@ -411,48 +427,82 @@
     if (connection == connectionSendComplain) {
         [responseDataSendComplain setLength:0];        
     }
+    else if (connection == connectionCheckComplainStatus) {
+        [responseDataCheckComplainStatus setLength:0];
+    }
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
     if (connection == connectionSendComplain) {
         [responseDataSendComplain appendData:data];        
     }
+    else if (connection == connectionCheckComplainStatus) {
+        [responseDataCheckComplainStatus appendData:data];        
+    }
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {		
+	NSLog(@"connection didFailWithError ------------");
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
     if (connection == connectionSendComplain) {
         self.connectionSendComplain = nil;     
         
         [self showResendAlerView];
     }
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-	NSLog(@"connection didFailWithError ------------");
+    else if (connection == connectionCheckComplainStatus) {
+        self.connectionCheckComplainStatus = nil;
+
+        [self showStatusCheckFailedAlertView];
+    }
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
     if (connection == connectionSendComplain) {
-        NSString *responseStringSendComplain = [[[NSString alloc] initWithData:responseDataSendComplain encoding:NSUTF8StringEncoding] autorelease];
-        
+        self.connectionSendComplain = nil;        
+
+        NSString *responseStringSendComplain = [[[NSString alloc] initWithData:responseDataSendComplain encoding:NSUTF8StringEncoding] autorelease];        
         NSLog(@"responseStringSendComplain STRING -->%@", responseStringSendComplain);
+
         if (responseStringSendComplain.length == 6) {
             self.complain_serverID = responseStringSendComplain;
             self.complain_status = STATUS_REPORTED;
             
             [self updateComplainInDB];
+
+            if (actionMode == COMPLAIN_EDITING) {
+                actionMode = COMPLAIN_REPORTED;
+            }
         }
         else {
             [self showResendAlerView]; 
         }
-        self.connectionSendComplain = nil;        
 
-        if (actionMode == COMPLAIN_EDITING) {
-            actionMode = COMPLAIN_REPORTED;
-        }
         [self loadInitialvalues];
         [self.complainsTableView reloadData];        
-    }   
+    }
+    else if (connection == connectionCheckComplainStatus) {
+        self.connectionCheckComplainStatus = nil;
+
+        NSString *responseStringCheckComplainStatus = [[[NSString alloc] initWithData:responseDataCheckComplainStatus encoding:NSUTF8StringEncoding] autorelease];        
+        NSLog(@"responseStringSendComplain STRING -->%@", responseStringCheckComplainStatus);
+        
+        
+        if ([responseStringCheckComplainStatus isEqualToString:STATUS_RESOLVED]) {
+            self.complain_status = responseStringCheckComplainStatus;
+            
+            [self updateComplainInDB];
+
+            actionMode = COMPLAIN_RESOLVED;
+            [self loadInitialvalues];
+        }
+        else {
+            [self showStatusCheckFailedAlertView];
+        }
+        
+    }
 }
 
 
@@ -484,7 +534,7 @@
 
         [reportBUtton setTitle:@"Check Status" forState:UIControlStateNormal];
     }
-    else if (actionMode == COMPLAIN_REPORTED) {
+    else if (actionMode == COMPLAIN_RESOLVED) {
         complainsTableView.userInteractionEnabled = NO;
         complainTextView.userInteractionEnabled  = NO;
 
@@ -563,12 +613,22 @@
 -(void)showResendAlerView{
     UIAlertView *alert = [[[UIAlertView alloc] init] autorelease];
     [alert setTitle:@"Save complain"];
-    [alert setMessage:@"Want to save this complain for sending it later??"];
+    [alert setMessage:@"Want to save this complain and report it later??"];
     [alert addButtonWithTitle:@"Yes"];
     [alert addButtonWithTitle:@"No"];
     [alert setDelegate:self];
     [alert setTag:1];
     [alert show]; 
+}
+
+-(void)showStatusCheckFailedAlertView{
+    UIAlertView *alert = [[[UIAlertView alloc] init] autorelease];
+    [alert setTitle:@"Error!!"];
+    [alert setMessage:@"Status check failed"];
+    [alert addButtonWithTitle:@"Ok"];
+    [alert setDelegate:nil];
+    [alert setTag:1];
+    [alert show];     
 }
 
 -(BOOL)validateData{

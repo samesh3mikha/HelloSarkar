@@ -39,8 +39,8 @@
     NSString *complain_complainText;
     NSString *complain_status; 
     
-    NSURLConnection *connectionSendComplain;
-	NSMutableData *responseDataSendComplain;
+    NSURLConnection *connectionSendComplain, *connectionCheckComplainStatus;
+	NSMutableData *responseDataSendComplain, *responseDataCheckComplainStatus;
 
     NSManagedObjectContext *managedObjectContext;
 }
@@ -65,6 +65,7 @@
 @property(nonatomic,retain) NSString *complain_complainText;
 @property(nonatomic,retain) NSString *complain_status;
 @property(nonatomic,retain) NSURLConnection *connectionSendComplain;
+@property(nonatomic,retain) NSURLConnection *connectionCheckComplainStatus;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
 //---------  SELF METHODS ---------
@@ -88,6 +89,7 @@
 -(void)showComplainTypeList;
 -(void)showDatePicker;
 -(void)showResendAlerView;
+-(void)showStatusCheckFailedAlertView;
 -(BOOL)validateData;
 -(void)saveComplainInDB;
 -(void)updateComplainInDB;
