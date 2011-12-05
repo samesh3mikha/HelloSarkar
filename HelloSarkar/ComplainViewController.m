@@ -232,7 +232,7 @@
     }
 
     // MAY BE WRONG IMPLEMENTATION BUT NECESSARY WORK AROUND
-    [self saveComplainInDB];
+    [self saveComplainValues];
 }
 
 #pragma mark -
@@ -328,7 +328,15 @@
     {
         if (buttonIndex == 1)
         {
-            
+            [self deleteComplainFromDB];
+        }
+        
+        if (actionMode == COMPLAIN_CREATING) {
+            [self loadInitialvalues];
+            [self.complainsTableView reloadData];            
+        }
+        else if (actionMode == COMPLAIN_EDITING) {
+           	[self.navigationController popViewControllerAnimated:YES];
         }
     }
 }
@@ -649,8 +657,21 @@
 }
 
 -(void)deleteComplainFromDB{
-//    [self.managedObjectContext deleteObject:complain];	
-//    [self updateDB];
+    Complain *complain;
+    NSFetchRequest *fetchRequest = [[[NSFetchRequest alloc] init] autorelease];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Complain" inManagedObjectContext:self.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ID = %d", self.complain_ID];
+    [fetchRequest setPredicate:predicate];
+    NSError *error = nil;
+    
+    NSArray *complains = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
+    if (complains.count > 0) {
+        complain = [complains objectAtIndex:0];
+    }
+
+    [self.managedObjectContext deleteObject:complain];	
+    [self updateDB];
 }
 
 -(void)updateDB{

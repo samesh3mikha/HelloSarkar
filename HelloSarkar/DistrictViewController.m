@@ -52,13 +52,15 @@
     // Do any additional setup after loading the view from its nib.
 	districtListTableView.backgroundColor = [UIColor clearColor];
 
-    if ([SharedStore store].districtArray.count == 0) {
-        [self getDistrictListFromServer];        
-    }
-    else
-    {
-        [self prepareDistrictList];        
-    }
+//    if ([SharedStore store].districtArray.count == 0) {
+//        [self getDistrictListFromServer];        
+//    }
+//    else
+//    {
+//        [self prepareDistrictList];        
+//    }
+    
+    [self prepareDistrictList];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

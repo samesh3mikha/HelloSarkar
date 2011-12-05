@@ -52,13 +52,15 @@
     // Do any additional setup after loading the view from its nib.
 	complainTypeListTableView.backgroundColor = [UIColor clearColor];
 
-    if ([SharedStore store].complainTypeArray.count == 0) {
-        [self getComplainTypeFromServer];        
-    }
-    else
-    {
-        [self prepareComplainTypeList];        
-    }
+//    if ([SharedStore store].complainTypeArray.count == 0) {
+//        [self getComplainTypeFromServer];        
+//    }
+//    else
+//    {
+//        [self prepareComplainTypeList];        
+//    }
+    
+    [self prepareComplainTypeList];
 }
 
 
